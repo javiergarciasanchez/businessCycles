@@ -1,8 +1,7 @@
 package businessCycles;
 
-import static repast.simphony.random.RandomHelper.*;
-import static repast.simphony.essentials.RepastEssentials.*;
-
+import static repast.simphony.essentials.RepastEssentials.GetParameter;
+import static repast.simphony.random.RandomHelper.setSeed;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -19,7 +18,7 @@ public class ModelLoader extends DefaultContext<Object> implements
 		Integer seed = (Integer) GetParameter("randomSeed");
 		if (seed != null)
 			setSeed(seed);
-
+		
 		context.setId("businessCycles");
 
 		return context;

@@ -12,27 +12,16 @@
  */
 package businessCycles;
 
-/**
- *
- * Import the needed packages.
- *
- */
 import java.awt.Component;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.*;
-import repast.simphony.ui.probe.*;
 import repast.simphony.util.collections.IndexedIterable;
 import static repast.simphony.essentials.RepastEssentials.*;
 
 import javax.swing.*;
 
-/**
- * 
- * This is an agent.
- * 
- */
 public class ModelInitializer {
 
 	
@@ -43,12 +32,16 @@ public class ModelInitializer {
 		if (checkParam()){
 			@SuppressWarnings("unchecked")
 			Context<Object> context = FindContext("businessCycles");
+			
+
 
 			// Previous supply manager should be eliminated
 			IndexedIterable<Object> tmpSuppManList = context.getObjects(SupplyManager.class);
 			if (tmpSuppManList.size()== 1){
 				context.remove(tmpSuppManList.get(0));
 			}
+			
+			Firm.readParams();
 
 			new SupplyManager(context);
 			RunEnvironment.getInstance().endAt((Double) GetParameter("stopAt"));
@@ -77,14 +70,6 @@ public class ModelInitializer {
 		}
 
 		return true;
-	}
-
-	@ProbeID()
-	public String toString() {
-
-		// Set the default agent identifier.
-		return "ModelInitializer";
-
 	}
 
 }

@@ -20,7 +20,7 @@
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Profit_Mean</id>
         <className>businessCycles.Firm</className>
-        <methodName>Profit</methodName>
+        <methodName>getProfit</methodName>
         <aggType>MEAN</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -30,6 +30,24 @@
         <id>Med_Cost_Mean</id>
         <className>businessCycles.Firm</className>
         <methodName>getMedCost</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>quantity_Mean</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>quantity_Mean</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getQuantity</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>FirstUnitCost</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>FirstUnitCost</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getFirstUnitCost</methodName>
         <aggType>MEAN</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>

@@ -30,83 +30,181 @@ public class Firm {
 		double rD = 0.0;
 	}
 
-	public Decision currentDecision = new Decision();
+	private int timeCohort = 0;
+	private int opLevCohort = 0;
 
-	public Decision nextDecision = new Decision();
+	public Decision currentDecision;
+	public Decision nextDecision;
 
-	public class State {
-		double acumQ = 0.0;
-		// chequear firstUnitCost decía null
-		double firstUnitCost = 0.0;
-		double performance = 0.0;
-		double capital = 0.0;
-		double capitalProductivity = 1.0;
-		double rDEfficiency = 0.0;
-		double costOfCapital = 0.0;
-		double fixedCost = 0.0;
-		double profit = 0.0;
-		double firmReturn = 0.0;
-	}
+	// Local state variables - change every period
+	private double performance = 0.0;
+	private double capital = 0.0;
+	private double acumQ = 0.0;
+	private double acumProfit = 0.0;
 
-	public State currentState = new State();
+	// Local firm variables - stable along firm life
+	private double firstUnitCost = 0.0;
+	private double rDEfficiency = 0.0;
+	private double operatingLeverage = 0.0;
+	private double expon = 0.0;
+	private double born = 0.0;
 
-	protected static long agentIDCounter = 1;
-	protected String agentID = "Firm " + (agentIDCounter++);
+	// Static Firm variables - identical for all firms
+	private static double capitalProductivity;
+	private static double minVarCost;
+	private static double minCapital;
+	private static double costOfCapital;
+
+	private static double perfWeight;
+	private static double minPerformance;
+
+	private static double demElast;
+	private static double supElast;
+
+	private static double opLevMean;
+	private static double opLevStdDev;
+	private static double flexCostMean;
+	private static double flexCostStdDev;
+	private static double deprec;
+	private static double maxExtFund;
+	private static double invParam;
+
+	private static long agentIDCounter;
+	private String agentID = "Firm " + (agentIDCounter++);
 
 	public Firm(Context<Object> context) {
-		
-		
-		context.add(this);
-		
-		born = GetTickCount();
 
-		// A minimum FUC is set to 10% of mean
-		currentState.firstUnitCost = max(
-				0.1 * (Double) GetParameter("firstUnitCostMean"),
-				supplyManager.firstUnitCostNormal.nextDouble());
-		currentState.capitalProductivity = (Double) GetParameter("capitalProductivity");
+		context.add(this);
+
+		currentDecision = new Decision();
+		nextDecision = new Decision();
 		nextDecision.rD = 0.0;
 
-		currentState.capital = max((Double) GetParameter("minimumCapital"),
+		born = GetTickCount();
+		timeCohort = getCohort(born, supplyManager.timeCohortLimits);
+
+		// A minimum first unit cost is set to 10% of mean
+		firstUnitCost = max(0.1 * (Double) GetParameter("firstUnitCostMean"),
+				supplyManager.firstUnitCostNormal.nextDouble());
+
+		capital = max((Double) GetParameter("minimumCapital"),
 				supplyManager.iniKNormal.nextDouble());
-		nextDecision.quantity = currentState.capital
-				* currentState.capitalProductivity;
+		nextDecision.quantity = capital * capitalProductivity;
+
+		operatingLeverage = min(1.0,
+				max(0.0, supplyManager.operatingLeverageNormal.nextDouble()));
+		opLevCohort = getCohort(operatingLeverage,
+				supplyManager.opLevCohortLimits);
+
+		// Initial perfomance is set to minPerformance
+		performance = minPerformance;
 
 		// 0.5 < learning rate <= 1.0
 		double learningRate = min(1.0,
 				max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
-		currentState.rDEfficiency = max(0.0,
-				supplyManager.rDEfficiencyNormal.nextDouble());
+		rDEfficiency = max(0.0, supplyManager.rDEfficiencyNormal.nextDouble());
 
-		currentState.costOfCapital = (Double) GetParameter("costOfCapital");
-		currentState.fixedCost = (Double) GetParameter("fixedCost");
-		currentState.performance = (Double) GetParameter("initialPerformance");
+	}
+
+	private int getCohort(double value, double[] cohortLimits) {
+
+		for (int i = 0; i < cohortLimits.length; i++) {
+			if (value < cohortLimits[i])
+				return i + 1;
+		}
+
+		return cohortLimits.length + 1;
+
+	}
+
+	public static void readParams() {
+		// Static Firm variables - identical for all firms
+		capitalProductivity = (Double) GetParameter("capitalProductivity");
+		minVarCost = (Double) GetParameter("minVarCost");
+		minCapital = (Double) GetParameter("minimumCapital");
+		costOfCapital = (Double) GetParameter("costOfCapital");
+
+		perfWeight = (Double) GetParameter("performanceWeight");
+		minPerformance = (Double) GetParameter("minimumPerformance");
+
+		demElast = (Double) GetParameter("demandElasticity");
+		supElast = (Double) GetParameter("supplyElasticity");
+
+		opLevMean = (Double) GetParameter("operatingLeverageMean");
+		opLevStdDev = (Double) GetParameter("operatingLeverageStdDev")
+				* opLevMean;
+		flexCostMean = (Double) GetParameter("flexibilityCostMean");
+		flexCostStdDev = (Double) GetParameter("flexibilityCostStdDev")
+				* flexCostMean;
+		deprec = (Double) GetParameter("depreciation");
+		maxExtFund = (Double) GetParameter("maxExternalFunding");
+		invParam = (Double) GetParameter("investmentParam");
+
+		agentIDCounter = 1;
+	}
+
+	public boolean checkEntry() {
+
+		return (profit(nextDecision, getPrice()) / getCapital() >= minPerformance);
 
 	}
 
 	public double offer() {
 
-		currentDecision.quantity = nextDecision.quantity;
+		currentDecision.quantity = Demand.getCapacityUsed()
+				* nextDecision.quantity;
+
 		currentDecision.rD = nextDecision.rD;
 		return currentDecision.quantity;
 
 	}
 
+	public double profit(Decision decision, double price) {
 
-	public double profit(State firmState, Decision decision, double price) {
+		return price * decision.quantity - totalProdCost(decision)
+				- totalNonProdCost(decision);
 
-		// Calculates cost using learning curve: cost of new acummulated Q minus
-		// old acummulated Q. See http://maaw.info/LearningCurveSummary.htm
-		// (Wright model)
-		return price
-				* decision.quantity
-				- firmState.firstUnitCost
-				* (pow(firmState.acumQ + decision.quantity, 1.0 + expon) - pow(
-						firmState.acumQ, 1.0 + expon))
-				- (firmState.costOfCapital + (Double) GetParameter("depreciation"))
-				* firmState.capital - decision.rD - firmState.fixedCost;
+	}
 
+	/*
+	 * Calculates cost using learning curve: cost of new accumulated Q minus old
+	 * accumulated Q. See http://maaw.info/LearningCurveSummary.htm (Wright
+	 * model)
+	 */
+	private double totalProdCost(Decision decision) {
+
+		// Get Learning curve cost + productive minimum cost
+		double lc = firstUnitCost
+				* (pow(acumQ + decision.quantity, 1.0 + expon) - pow(acumQ,
+						1.0 + expon)) + minVarCost * decision.quantity;
+
+		// Return flexibility adjusted value
+		return lc * operatingLeverageAdjustment();
+
+	}
+
+	/*
+	 * Adds the cost of flexibility. Increases variable cost in firms that have
+	 * lower fixed costs. If opLev = 100% (All costs depend on size) adjustment
+	 * = 1 If capacityUsed = 100% adjustment = flexibilityCost
+	 */
+	private double operatingLeverageAdjustment() {
+
+		double fC = flexCostMean + (opLevMean - operatingLeverage)
+				* flexCostStdDev / opLevStdDev;
+
+		// Flexibility cost cannot be lower than 10% of mean
+		fC = max(0.1 * flexCostMean, fC);
+
+		return fC
+				* (operatingLeverage + (1 - operatingLeverage)
+						* Demand.getCapacityUsed());
+
+	}
+
+	private double totalNonProdCost(Decision decision) {
+		return (costOfCapital + deprec) * capital + decision.rD;
 	}
 
 	/**
@@ -123,25 +221,13 @@ public class Firm {
 		boolean returnValue;
 
 		// Calculates profit & Performance
-		currentState.profit = profit(currentState, currentDecision,
-				supplyManager.price);
-		currentState.firmReturn = currentState.profit / currentState.capital;
-		currentState.performance = (Double) GetParameter("performanceWeight")
-				* currentState.performance
-				+ (1 - (Double) GetParameter("performanceWeight"))
-				* currentState.firmReturn;
+		performance = perfWeight * performance + (1 - perfWeight) * getReturn();
 
 		// if it is an exit, returns false
-		returnValue = !(currentState.performance < (Double) GetParameter("minimumPerformance") || currentState.capital < (Double) GetParameter("minimumCapital"));
+		returnValue = !(performance < minPerformance || capital < minCapital);
 
-		currentState.acumQ += currentDecision.quantity;
-		acumProfit += currentState.profit;
-
-		medCost = (supplyManager.price * currentDecision.quantity - currentState.profit)
-				/ currentDecision.quantity;
-		varCost = (supplyManager.price * currentDecision.quantity
-				- currentState.profit - currentDecision.rD - currentState.fixedCost)
-				/ currentDecision.quantity;
+		acumQ += currentDecision.quantity;
+		acumProfit += getProfit();
 
 		return returnValue;
 
@@ -149,113 +235,101 @@ public class Firm {
 
 	public void plan() {
 
-		double maxFunding = currentState.profit
-				+ (Double) GetParameter("depreciation")
-				* currentState.capital
+		double maxFunding = getProfit()
+				+ deprec
+				* capital
 				+ ((Demand.getSSMagnitude() > 0.0) ? 0.0
-						: ((Double) GetParameter("maxExternalFunding") * currentState.capital));
+						: (maxExtFund * capital));
 
-		double invest = min(maxFunding, currentState.capital
-				* ((Double) GetParameter("depreciation") + netInvestment()));
+		double invest = min(maxFunding, capital * (deprec + netInvestment()));
 
 		invest = max(0.0, invest);
 
-		currentState.capital = currentState.capital
-				* (1.0 - (Double) GetParameter("depreciation")) + invest;
+		capital = capital * (1.0 - deprec) + invest;
 
-		nextDecision.quantity = currentState.capital
-				* currentState.capitalProductivity;
+		nextDecision.quantity = capital * capitalProductivity;
 
 		// Then new R&D is determined to optimize First unit cost.The maxFunding
 		// is relevant to speed up the process.
 		double optimalRD = pow(
-				currentState.firstUnitCost
-						/ currentState.rDEfficiency
-						* (pow(currentState.acumQ + nextDecision.quantity,
-								1.0 + expon) - pow(currentState.acumQ,
-								1.0 + expon)), 0.5) - 1.0;
+				firstUnitCost
+						/ rDEfficiency
+						* (pow(acumQ + nextDecision.quantity, 1.0 + expon) - pow(
+								acumQ, 1.0 + expon))
+						* operatingLeverageAdjustment(), 0.5) - 1.0;
 
-		double minRD = 1.0 / currentState.rDEfficiency - 1.0;
+		double minRD = 1.0 / rDEfficiency - 1.0;
 
 		nextDecision.rD = max(minRD, min(maxFunding - invest, optimalRD));
 
 		// apply innovation
-		currentState.firstUnitCost *= 1.0
-				/ ((nextDecision.rD + 1.0) * currentState.rDEfficiency)
+		firstUnitCost *= 1.0 / ((nextDecision.rD + 1.0) * rDEfficiency)
 				* supplyManager.innovationErrorNormal.nextDouble();
 
+	}
+
+	/*
+	 * It is derived maximizing economic profit (ie substracting cost of
+	 * capital)
+	 */
+	private double marginalCost() {
+
+		return (firstUnitCost * (1.0 + expon)
+					* pow(acumQ + currentDecision.quantity, expon) + minVarCost)
+				* operatingLeverageAdjustment()
+				+ (costOfCapital + deprec)
+				/ capitalProductivity;
 
 	}
 
-	public double marginalCost() {
+	private double netInvestment() {
 
-		return currentState.firstUnitCost
-				* (1.0 + expon)
-				* pow(currentState.acumQ + currentDecision.quantity, expon)
-				+ (currentState.costOfCapital + (Double) GetParameter("depreciation"))
-				/ currentState.capitalProductivity;
+		double optimalMarkUp = (demElast + (1 - getMarketShare()) * supElast)
+				/ (demElast + (1 - getMarketShare()) * supElast - getMarketShare());
 
-	}
-
-	public double netInvestment() {
-
-		double optimalMarkUp = ((Double) GetParameter("demandElasticity") + (1 - marketShare())
-				* (Double) GetParameter("supplyElasticity"))
-				/ ((Double) GetParameter("demandElasticity")
-						+ (1 - marketShare())
-						* (Double) GetParameter("supplyElasticity") - marketShare());
-
-		// dejo Winter a un lado y pongo el máximo igual al mark up del
-		// substituto.
-		/*
-		 * double maxMarkUp = 0.999 (supplyManager.price + (Double)
-		 * GetParameter("priceOfSubstitute")) / (2 * marginalCost()); return
-		 * (Double) GetParameter("investmentParam") (1 - min(optimalMarkUp,
-		 * maxMarkUp) * marginalCost() / supplyManager.price);
-		 */
-		return (Double) GetParameter("investmentParam")
-				* (1 - optimalMarkUp * marginalCost() / supplyManager.price);
+		return invParam * (1 - optimalMarkUp * marginalCost() / getPrice());
 
 	}
 
-	public double marketShare() {
+	/*
+	 * Methods to probe firm state
+	 */
+	public double getMarketShare() {
 
-		// Market Share is calculated with the quantity remaining after the dead
-		// firms have exited the industry
-		return currentDecision.quantity / supplyManager.totalQuantity;
+		return getQuantity() / supplyManager.getTotalQuantity();
 
 	}
 
-	public double price() {
+	public double getPrice() {
 		return supplyManager.price;
 	}
 
-	public double quantity() {
+	public double getQuantity() {
 		return currentDecision.quantity;
 	}
 
-	public double Profit() {
-		return currentState.profit;
+	public double getProfit() {
+		return profit(currentDecision, getPrice());
 	}
 
-	public double performance() {
-		return currentState.performance;
+	public double getPerformance() {
+		return performance;
 	}
 
-	public double rD() {
+	public double getRD() {
 		return currentDecision.rD;
 	}
 
 	public double getReturn() {
-		return currentState.firmReturn;
+		return getProfit() / getCapital();
 	}
 
 	public double getFirstUnitCost() {
-		return currentState.firstUnitCost;
+		return firstUnitCost;
 	}
 
-	public double acumQuantity() {
-		return currentState.acumQ;
+	public double getAcumQuantity() {
+		return acumQ;
 	}
 
 	public String toString() {
@@ -266,33 +340,60 @@ public class Firm {
 		return born;
 	}
 
-	public double born = 0.0;
+	public double getAge() {
+		return GetTickCount() - getBorn();
+	}
 
 	public double getExpon() {
 		return expon;
 	}
 
-	public double expon = 0.0;
-
 	public double getAcumProfit() {
 		return acumProfit;
 	}
 
-	public double acumProfit = 0.0;
-
 	public double getMedCost() {
-		return medCost;
+		return (getPrice() * getQuantity() - getProfit()) / getQuantity();
 	}
 
-	public double medCost = 0.0;
+	public double getTotalVarCost() {
+		return totalProdCost(currentDecision);
+	}
 
 	public double getVarCost() {
-		return varCost;
+		return getTotalVarCost() / getQuantity();
 	}
 
-	public double varCost = 0.0;
-
-	public double age() {
-		return GetTickCount() - born;
+	public double getVarCostWoAdj() {
+		return getVarCost() / getOperatingLeverageAdjustment();
 	}
+
+	public double getTotalFixedCost() {
+		return totalNonProdCost(currentDecision);
+	}
+
+	public double getFixedCostPerUnit() {
+		return getTotalFixedCost() / getQuantity();
+	}
+
+	public double getOperatingLeverage() {
+		return operatingLeverage;
+	}
+
+	public double getOperatingLeverageAdjustment() {
+		return operatingLeverageAdjustment();
+	}
+
+	public double getCapital() {
+		return capital;
+	}
+
+	public int getTimeCohort() {
+		return timeCohort;
+	}
+
+	public int getOpLevCohort() {
+		return opLevCohort;
+	}
+
 }

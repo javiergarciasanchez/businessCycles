@@ -12,14 +12,12 @@
  */
 package businessCycles;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.jet.stat.*;
 import cern.jet.random.*;
 import repast.simphony.context.Context;
-import repast.simphony.engine.environment.*;
 import repast.simphony.engine.schedule.*;
 import repast.simphony.parameter.*;
 import repast.simphony.random.*;
@@ -29,20 +27,25 @@ import static repast.simphony.essentials.RepastEssentials.*;
 
 public class SupplyManager {
 
-	public static final String TEXT_DELIM = "\"";
-	public static final String FIELD_SEPARATOR = ",";
-	public static final String FILE_NAME = "C:\\Users\\jgsanchez\\Documents\\Local Workspace\\Sudden Stop\\output\\All Parameters.txt";
-	public static final String NEW_LINE = "\r\n";
-
+	public double totalQuantity = 0;
+	public double price = 0;
+	public double dead = 0;
+	public int bornFirms = 0;
+	public double totalFirms = 1.0;
+	public double totalQBeforeExit = 0;
 	public double totalFBeforeExit = 1.0;
 
+	public double[] timeCohortLimits = null;
+	public double[] opLevCohortLimits = null;
+
 	public Normal iniKNormal = null;
+	public Normal operatingLeverageNormal = null;
 	public Beta learningRateDistrib = null;
 	public Normal entrantsNormal = null;
 	public Normal rDEfficiencyNormal = null;
 	public Normal innovationErrorNormal = null;
 	public Normal firstUnitCostNormal = null;
-	
+
 	private Context<Object> context;
 
 	public SupplyManager(Context<Object> context) {
@@ -52,20 +55,51 @@ public class SupplyManager {
 
 		price = (Double) GetParameter("priceOfSubstitute");
 
+		/* Read Time Cohorts limits */
+		String[] tmp = ((String) GetParameter("timeCohorts")).split(":");
+		timeCohortLimits = new double[tmp.length];
+		for (int i = 0; i < tmp.length; i++) {
+			timeCohortLimits[i] = new Double(tmp[i]);
+		}
+
+		/*
+		 * Set Operating Leverage Cohorts Limits
+		 */
+		double opLevMean = (Double) GetParameter("operatingLeverageMean");
+		double opLevStdDev = (Double) GetParameter("operatingLeverageStdDev")
+				* opLevMean;
+		int cohorts = (Integer) GetParameter("opLevCohorts");
+		opLevCohortLimits = new double[cohorts - 1];
+
+		for (int i = 0; i < cohorts - 1; i++) {
+			opLevCohortLimits[i] = Probability.normalInverse((i + 1.0)
+					/ cohorts)
+					* opLevStdDev + opLevMean;
+		}
+
+		/* Create distributions for initial variables of firms */
+
 		rDEfficiencyNormal = RandomHelper.createNormal(
 				(Double) GetParameter("rDEfficiencyMean"),
 				(Double) GetParameter("rDEfficiencyStdDev")
 						* (Double) GetParameter("rDEfficiencyMean"));
+
 		iniKNormal = RandomHelper.createNormal(
 				(Double) GetParameter("iniKMean"),
 				(Double) GetParameter("iniKStdDev")
 						* (Double) GetParameter("iniKMean"));
+
+		operatingLeverageNormal = RandomHelper.createNormal(opLevMean,
+				opLevStdDev);
+
 		entrantsNormal = RandomHelper.createNormal(
 				(Double) GetParameter("entrantsMean"),
 				(Double) GetParameter("entrantsStdDev")
 						* (Double) GetParameter("entrantsMean"));
+
 		innovationErrorNormal = RandomHelper.createNormal(1.0,
 				(Double) GetParameter("innovationErrorStdDev"));
+
 		firstUnitCostNormal = RandomHelper.createNormal(
 				(Double) GetParameter("firstUnitCostMean"),
 				(Double) GetParameter("firstUnitCostStdDev")
@@ -94,30 +128,36 @@ public class SupplyManager {
 
 	}
 
+	@ScheduledMethod(start = 1d, pick = 9223372036854775807l, interval = 1d, shuffle = true)
+	public void step() {
+	
+		// Manage Entry
+		double potentialEntrants = entrantsNormal.nextDouble();
+		if (potentialEntrants > 0)
+			entry((int) round(potentialEntrants));
+	
+		processOffers();
+	
+		// Planning
+		IndexedIterable<Object> firms = context.getObjects(Firm.class);
+		for (Object f : firms)
+			((Firm) f).plan();
+	
+	}
+
 	private void entry(int potentialEntrants) {
 
-		// Check different types of Entry
-		Firm tmpFirm;
-		double tmpPerformance;
+		Firm f;
 		bornFirms = 0;
 
-		// This is a loop.
 		for (int j = 1; j <= potentialEntrants; j++) {
 
 			// Destroy if not profitable
-			tmpFirm = new Firm(context);
-
-			tmpPerformance = (Double) GetParameter("performanceWeight")
-					* (Double) GetParameter("initialPerformance")
-					+ (1 - (Double) GetParameter("performanceWeight"))
-					* tmpFirm.profit(tmpFirm.currentState,
-							tmpFirm.nextDecision, price)
-					/ tmpFirm.currentState.capital;
-			if (tmpPerformance <= (Double) GetParameter("minimumPerformance")) {
-				RemoveAgentFromModel(tmpFirm);
-			} else {
+			f = new Firm(context);
+			if (f.checkEntry())
 				bornFirms++;
-			}
+			else
+				RemoveAgentFromModel(f);
 
 		}
 
@@ -134,8 +174,11 @@ public class SupplyManager {
 		} else {
 			double tmpQ = 0.0;
 			for (Object f : firms) {
+
 				tmpQ += ((Firm) f).offer();
+
 			}
+
 			totalQuantity = tmpQ;
 		}
 
@@ -174,60 +217,6 @@ public class SupplyManager {
 
 	}
 
-	@ScheduledMethod(start = 1d, pick = 9223372036854775807l, interval = 1d, shuffle = true)
-	public void step() {
-
-		// Manage Entry
-		double potentialEntrants = entrantsNormal.nextDouble();
-		if (potentialEntrants > 0)
-			entry((int) round(potentialEntrants));
-
-		processOffers();
-
-		// Planning
-		IndexedIterable<Object> firms = context.getObjects(Firm.class);
-		for (Object f : firms)
-			((Firm) f).plan();
-
-	}
-
-	@ScheduledMethod(start = 1, interval = 1, shuffle = true)
-	public void saveParams() {
-
-		if (RunEnvironment.getInstance().isBatch()) {
-
-			FileWriter paramsFile;
-			try {
-				paramsFile = new FileWriter(FILE_NAME, true);
-
-				Parameters params = RunEnvironment.getInstance()
-						.getParameters();
-
-				Schema schema = params.getSchema();
-				for (String paramName : schema.parameterNames()) {
-					// write run number
-					paramsFile.write(((Integer) RunState.getInstance()
-							.getRunInfo().getRunNumber()).toString());
-
-					// write param Name
-					paramsFile.write(FIELD_SEPARATOR + TEXT_DELIM + paramName
-							+ TEXT_DELIM);
-
-					// writes param value
-					paramsFile.write(FIELD_SEPARATOR + GetParameter(paramName));
-
-					// new line
-					paramsFile.write(NEW_LINE);
-				}
-
-				paramsFile.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
 	public String toString() {
 
 		return "SupplyManager";
@@ -239,83 +228,34 @@ public class SupplyManager {
 		return totalQuantity;
 	}
 
-	public double totalQuantity = 0;
-
 	@Parameter(displayName = "Price", usageName = "price")
 	public double getPrice() {
 		return price;
 	}
 
-	public double price = 0;
-
-	/**
-	 * 
-	 * This is an agent property.
-	 * 
-	 * @field dead
-	 * 
-	 */
 	@Parameter(displayName = "Dead", usageName = "dead")
 	public double getDead() {
 		return dead;
 	}
 
-	public double dead = 0;
-
-	/**
-	 * 
-	 * This is an agent property.
-	 * 
-	 * @field bornFirms
-	 * 
-	 */
 	@Parameter(displayName = "Born Firms", usageName = "bornFirms")
 	public int getBornFirms() {
 		return bornFirms;
 	}
 
-	public int bornFirms = 0;
-
-	/**
-	 * 
-	 * This is an agent property.
-	 * 
-	 * @field totalFirms
-	 * 
-	 */
 	@Parameter(displayName = "Total Firms", usageName = "totalFirms")
 	public double getTotalFirms() {
 		return totalFirms;
 	}
 
-	public double totalFirms = 1.0;
-
-	/**
-	 * 
-	 * This is an agent property.
-	 * 
-	 * @field totalQBeforeExit
-	 * 
-	 */
 	@Parameter(displayName = "Total Q Before Exit", usageName = "totalQBeforeExit")
 	public double getTotalQBeforeExit() {
 		return totalQBeforeExit;
 	}
 
-	public double totalQBeforeExit = 0;
-
-	/**
-	 * 
-	 * This is an agent property.
-	 * 
-	 * @field totalFBeforeExit
-	 * 
-	 */
 	@Parameter(displayName = "Total F Before Exit", usageName = "totalFBeforeExit")
 	public double getTotalFBeforeExit() {
 		return totalFBeforeExit;
 	}
-
-
 
 }
