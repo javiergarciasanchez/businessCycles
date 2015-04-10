@@ -46,6 +46,8 @@ public class SupplyManager {
 	public Normal innovationErrorNormal = null;
 	public Normal firstUnitCostNormal = null;
 
+	public static int periods;
+
 	private Context<Object> context;
 
 	public SupplyManager(Context<Object> context) {
@@ -54,6 +56,8 @@ public class SupplyManager {
 		context.add(this);
 
 		price = (Double) GetParameter("priceOfSubstitute");
+
+		periods = (Integer) GetParameter("periods");
 
 		/* Read Time Cohorts limits */
 		String[] tmp = ((String) GetParameter("timeCohorts")).split(":");
@@ -128,21 +132,22 @@ public class SupplyManager {
 
 	}
 
-	@ScheduledMethod(start = 1d, pick = 9223372036854775807l, interval = 1d, shuffle = true)
+	@ScheduledMethod(start = 1d, interval = 1, shuffle = true)
 	public void step() {
-	
+
 		// Manage Entry
-		double potentialEntrants = entrantsNormal.nextDouble();
-		if (potentialEntrants > 0)
-			entry((int) round(potentialEntrants));
-	
+		int potentialEntrantsPerPeriod = (int) round(entrantsNormal
+				.nextDouble() / periods);
+		if (potentialEntrantsPerPeriod > 0)
+			entry(potentialEntrantsPerPeriod);
+
 		processOffers();
-	
+
 		// Planning
 		IndexedIterable<Object> firms = context.getObjects(Firm.class);
 		for (Object f : firms)
 			((Firm) f).plan();
-	
+
 	}
 
 	private void entry(int potentialEntrants) {
@@ -221,6 +226,10 @@ public class SupplyManager {
 
 		return "SupplyManager";
 
+	}
+
+	public double getCapacityUsed() {
+		return Demand.getCapacityUsed();
 	}
 
 	@Parameter(displayName = "Total Quantity", usageName = "totalQuantity")

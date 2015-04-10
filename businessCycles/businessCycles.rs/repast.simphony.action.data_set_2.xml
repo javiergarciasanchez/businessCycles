@@ -24,6 +24,15 @@
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
+    <entry>
+      <string>CapacityUsed</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>CapacityUsed</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getCapacityUsed</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
   </methodDataSources>
   <countSources class="linked-hash-map">
     <entry>
@@ -496,6 +505,27 @@
       <repast.simphony.data2.engine.CustomDataSourceDefinition>
         <id>Return_OL:3_T:3</id>
         <dsClassName>w.Return_3_3</dsClassName>
+      </repast.simphony.data2.engine.CustomDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Performance_OL:2_T:0</string>
+      <repast.simphony.data2.engine.CustomDataSourceDefinition>
+        <id>Performance_OL:2_T:0</id>
+        <dsClassName>w.Performance_2_0</dsClassName>
+      </repast.simphony.data2.engine.CustomDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Performance_OL:1_T:0</string>
+      <repast.simphony.data2.engine.CustomDataSourceDefinition>
+        <id>Performance_OL:1_T:0</id>
+        <dsClassName>w.Performance_1_0</dsClassName>
+      </repast.simphony.data2.engine.CustomDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Performance_OL:3_T:0</string>
+      <repast.simphony.data2.engine.CustomDataSourceDefinition>
+        <id>Performance_OL:3_T:0</id>
+        <dsClassName>w.Performance_3_0</dsClassName>
       </repast.simphony.data2.engine.CustomDataSourceDefinition>
     </entry>
   </customAggDataSources>

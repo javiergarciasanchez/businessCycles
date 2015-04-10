@@ -54,10 +54,10 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="suddenStopStart" displayName="Sudden Stop Start" type="int" 
-						defaultValue="20" 
+				<parameter name="suddenStopStart" displayName="Sudden Stop Start" type="double" 
+						defaultValue="20.0" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="operatingLeverageMean" displayName="Opeating Leverage Mean" type="double" 
@@ -90,10 +90,10 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="suddenStopDuration" displayName="Sudden Stop Duration" type="int" 
-						defaultValue="1" 
+				<parameter name="suddenStopDuration" displayName="Sudden Stop Duration" type="double" 
+						defaultValue="1.0" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="learningRateStdDev" displayName="Learning Rate Std Dev" type="double" 
@@ -206,6 +206,12 @@
 		/>
 				<parameter name="opLevCohorts" displayName="Number of Operating Leverage Cohorts" type="int" 
 						defaultValue="3" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		<parameter name="periods" displayName="Periods per Year" type="int" 
+						defaultValue="1" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

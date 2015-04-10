@@ -14,7 +14,11 @@ public class Demand {
 	 */
 	public static double price(double quantity) {
 
+		double annualizedQuantity = quantity
+				* (Integer) GetParameter("periods");
+		
 		double tmpCrisisImpact = 1.0 - getSSMagnitude();
+		
 		double sub = (Double) GetParameter("priceOfSubstitute");
 		double param = (Double) GetParameter("demandParameter");
 		double elast = (Double) GetParameter("demandElasticity");
@@ -23,7 +27,8 @@ public class Demand {
 
 		if (quantity > 0) {
 
-			double d = param * pow(quantity, -1.0 / elast) * tmpCrisisImpact;
+			double d = param * pow(annualizedQuantity, -1.0 / elast)
+					* tmpCrisisImpact;
 			return min(sub, d);
 
 		} else
@@ -32,12 +37,12 @@ public class Demand {
 	}
 
 	public static double getSSMagnitude() {
-		double tick = GetTickCount();
-		int start = (Integer) GetParameter("suddenStopStart");
-		int dur = (Integer) GetParameter("suddenStopDuration");
+		double year = GetTickCount() / (int) GetParameter("periods");
+		double start = (Double) GetParameter("suddenStopStart");
+		double dur = (Double) GetParameter("suddenStopDuration");
 		double sMag = (Double) GetParameter("suddenStopMagnitude");
 
-		if ((start <= tick) && (tick < dur + start))
+		if ((start <= year) && (year < dur + start))
 			return sMag;
 		else
 			return 0.0;

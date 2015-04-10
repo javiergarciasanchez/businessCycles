@@ -43,6 +43,10 @@
     <string>MarketShare_OL:1_T:3</string>
     <string>MarketShare_OL:2_T:3</string>
     <string>MarketShare_OL:3_T:3</string>
+    <string>CapacityUsed</string>
+    <string>Performance_OL:2_T:0</string>
+    <string>Performance_OL:1_T:0</string>
+    <string>Performance_OL:3_T:0</string>
   </sourceIds>
   <fileName>DataByOpLevFile.csv</fileName>
   <addTimeStamp>true</addTimeStamp>

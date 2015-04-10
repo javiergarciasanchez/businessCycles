@@ -148,3 +148,37 @@ INFO  [SwingWorker-pool-2-thread-2] 2015-03-13 17:49:28,438 repast.simphony.batc
 INFO  [SwingWorker-pool-2-thread-2] 2015-03-13 17:49:28,444 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/jgsanchez/git/businessCycles/businessCycles/output
 INFO  [SwingWorker-pool-2-thread-2] 2015-03-13 17:49:28,620 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,0033
 INFO  [SwingWorker-pool-2-thread-2] 2015-03-13 17:49:28,620 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 1,0898
+INFO  [AWT-EventQueue-0] 2015-04-08 17:33:04,340 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\jgsanchez\git\businessCycles\businessCycles\output\config.props
+INFO  [AWT-EventQueue-0] 2015-04-08 17:33:05,198 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
+	C:\Users\jgsanchez\git\businessCycles\businessCycles\batch\batch_params.xml to
+	C:\Users\JGSANC~1\AppData\Local\Temp\unrolledParamFile.txt
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:33:38,915 repast.simphony.batch.ssh.LocalSession - 
+	Copying locally C:\Users\JGSANC~1\AppData\Local\Temp\JGSanchez_localhost933813031610404349.zip to 
+C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525216057 ...
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:33:40,047 repast.simphony.batch.ssh.LocalSession - Copying Finished.
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:33:40,072 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0665
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:33:40,072 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525216057\JGSanchez_localhost933813031610404349.zip
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:33:41,854 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
+INFO  [pool-3-thread-1] 2015-04-08 17:34:42,269 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525216057 for DONE:  yes
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:34:42,271 repast.simphony.batch.ssh.SessionsDriver - Run Time: 1,0366
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:34:42,427 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525216057
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:34:42,544 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/jgsanchez/git/businessCycles/businessCycles/output
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:34:47,982 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,0952
+INFO  [SwingWorker-pool-2-thread-1] 2015-04-08 17:34:47,982 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 1,2015
+INFO  [AWT-EventQueue-0] 2015-04-08 17:44:24,823 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\jgsanchez\git\businessCycles\businessCycles\output\config.props
+INFO  [AWT-EventQueue-0] 2015-04-08 17:44:24,836 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
+	C:\Users\jgsanchez\git\businessCycles\businessCycles\batch\batch_params.xml to
+	C:\Users\JGSANC~1\AppData\Local\Temp\unrolledParamFile.txt
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:44:52,783 repast.simphony.batch.ssh.LocalSession - 
+	Copying locally C:\Users\JGSANC~1\AppData\Local\Temp\JGSanchez_localhost6872428219560929050.zip to 
+C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525890095 ...
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:44:52,818 repast.simphony.batch.ssh.LocalSession - Copying Finished.
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:44:52,818 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0454
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:44:52,818 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525890095\JGSanchez_localhost6872428219560929050.zip
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:44:56,131 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
+INFO  [pool-4-thread-1] 2015-04-08 17:45:56,133 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525890095 for DONE:  yes
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:45:56,135 repast.simphony.batch.ssh.SessionsDriver - Run Time: 1,0553
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:45:56,152 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\JGSANC~1\AppData\Local\Temp\simphony_model_1428525890095
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:45:56,161 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/jgsanchez/git/businessCycles/businessCycles/output
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:45:56,520 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,0064
+INFO  [SwingWorker-pool-2-thread-2] 2015-04-08 17:45:56,520 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 1,1090

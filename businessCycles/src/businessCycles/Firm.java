@@ -50,10 +50,10 @@ public class Firm {
 	private double born = 0.0;
 
 	// Static Firm variables - identical for all firms
-	private static double capitalProductivity;
+	private static double capitalProductivityPerPeriod;
 	private static double minVarCost;
 	private static double minCapital;
-	private static double costOfCapital;
+	private static double costOfCapitalPerPeriod;
 
 	private static double perfWeight;
 	private static double minPerformance;
@@ -66,7 +66,8 @@ public class Firm {
 	private static double flexCostMean;
 	private static double flexCostStdDev;
 	private static double deprec;
-	private static double maxExtFund;
+	private static double deprecPerPeriod;
+	private static double maxExtFundPerPeriod;
 	private static double invParam;
 
 	private static long agentIDCounter;
@@ -89,7 +90,7 @@ public class Firm {
 
 		capital = max((Double) GetParameter("minimumCapital"),
 				supplyManager.iniKNormal.nextDouble());
-		nextDecision.quantity = capital * capitalProductivity;
+		nextDecision.quantity = capital * capitalProductivityPerPeriod;
 
 		operatingLeverage = min(1.0,
 				max(0.0, supplyManager.operatingLeverageNormal.nextDouble()));
@@ -120,10 +121,12 @@ public class Firm {
 
 	public static void readParams() {
 		// Static Firm variables - identical for all firms
-		capitalProductivity = (Double) GetParameter("capitalProductivity");
+		capitalProductivityPerPeriod = (Double) GetParameter("capitalProductivity")
+				/ SupplyManager.periods;
 		minVarCost = (Double) GetParameter("minVarCost");
 		minCapital = (Double) GetParameter("minimumCapital");
-		costOfCapital = (Double) GetParameter("costOfCapital");
+		costOfCapitalPerPeriod = (Double) GetParameter("costOfCapital")
+				/ SupplyManager.periods;
 
 		perfWeight = (Double) GetParameter("performanceWeight");
 		minPerformance = (Double) GetParameter("minimumPerformance");
@@ -138,15 +141,19 @@ public class Firm {
 		flexCostStdDev = (Double) GetParameter("flexibilityCostStdDev")
 				* flexCostMean;
 		deprec = (Double) GetParameter("depreciation");
-		maxExtFund = (Double) GetParameter("maxExternalFunding");
+		deprecPerPeriod = deprec / SupplyManager.periods;
+		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding")
+				/ SupplyManager.periods;
 		invParam = (Double) GetParameter("investmentParam");
 
 		agentIDCounter = 1;
 	}
 
 	public boolean checkEntry() {
+		double expectedAnnualReturn = profit(nextDecision, getPrice())
+				* SupplyManager.periods / getCapital();
 
-		return (profit(nextDecision, getPrice()) / getCapital() >= minPerformance);
+		return (expectedAnnualReturn >= minPerformance);
 
 	}
 
@@ -204,7 +211,8 @@ public class Firm {
 	}
 
 	private double totalNonProdCost(Decision decision) {
-		return (costOfCapital + deprec) * capital + decision.rD;
+		return (costOfCapitalPerPeriod + deprecPerPeriod) * capital
+				+ decision.rD;
 	}
 
 	/**
@@ -236,18 +244,19 @@ public class Firm {
 	public void plan() {
 
 		double maxFunding = getProfit()
-				+ deprec
+				+ deprecPerPeriod
 				* capital
 				+ ((Demand.getSSMagnitude() > 0.0) ? 0.0
-						: (maxExtFund * capital));
+						: (maxExtFundPerPeriod * capital));
 
-		double invest = min(maxFunding, capital * (deprec + netInvestment()));
+		double invest = min(maxFunding, capital
+				* (deprecPerPeriod + netInvestment()));
 
 		invest = max(0.0, invest);
 
-		capital = capital * (1.0 - deprec) + invest;
+		capital = capital * (1.0 - deprecPerPeriod) + invest;
 
-		nextDecision.quantity = capital * capitalProductivity;
+		nextDecision.quantity = capital * capitalProductivityPerPeriod;
 
 		// Then new R&D is determined to optimize First unit cost.The maxFunding
 		// is relevant to speed up the process.
@@ -275,10 +284,10 @@ public class Firm {
 	private double marginalCost() {
 
 		return (firstUnitCost * (1.0 + expon)
-					* pow(acumQ + currentDecision.quantity, expon) + minVarCost)
+				* pow(acumQ + currentDecision.quantity, expon) + minVarCost)
 				* operatingLeverageAdjustment()
-				+ (costOfCapital + deprec)
-				/ capitalProductivity;
+				+ (costOfCapitalPerPeriod + deprecPerPeriod)
+				/ capitalProductivityPerPeriod;
 
 	}
 
@@ -321,7 +330,7 @@ public class Firm {
 	}
 
 	public double getReturn() {
-		return getProfit() / getCapital();
+		return getProfit() * SupplyManager.periods / getCapital();
 	}
 
 	public double getFirstUnitCost() {
