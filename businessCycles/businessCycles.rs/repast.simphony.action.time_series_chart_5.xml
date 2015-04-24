@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Adjustment</name>
+  <name>VarCost</name>
   <dataSet>AgFirmsbyOpLev</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Adjustment</chartTitle>
+  <chartTitle>Variable Cost</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,36 +21,48 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>OperatingLeverageAdjustment_OL:3_T:0</string>
+      <string>VarCost_OL:1_T:0</string>
       <SeriesData>
-        <label>OperatingLeverageAdjustment_OL:3_T:0</label>
-        <color>
-          <red>255</red>
-          <green>102</green>
-          <blue>102</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>OperatingLeverageAdjustment_OL:2_T:0</string>
-      <SeriesData>
-        <label>OperatingLeverageAdjustment_OL:2_T:0</label>
-        <color>
-          <red>255</red>
-          <green>255</green>
-          <blue>102</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>OperatingLeverageAdjustment_OL:1_T:0</string>
-      <SeriesData>
-        <label>OperatingLeverageAdjustment_OL:1_T:0</label>
+        <label>VarCost_OL:1_T:0</label>
         <color>
           <red>102</red>
           <green>255</green>
+          <blue>102</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>VarCost_OL:2_T:0</string>
+      <SeriesData>
+        <label>VarCost_OL:2_T:0</label>
+        <color>
+          <red>255</red>
+          <green>255</green>
+          <blue>102</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Price</string>
+      <SeriesData>
+        <label>Price</label>
+        <color>
+          <red>51</red>
+          <green>51</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>VarCost_OL:3_T:0</string>
+      <SeriesData>
+        <label>VarCost_OL:3_T:0</label>
+        <color>
+          <red>255</red>
+          <green>102</green>
           <blue>102</blue>
           <alpha>255</alpha>
         </color>

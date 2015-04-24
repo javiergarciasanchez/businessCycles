@@ -18,6 +18,7 @@ import java.util.List;
 import cern.jet.stat.*;
 import cern.jet.random.*;
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.*;
 import repast.simphony.parameter.*;
 import repast.simphony.random.*;
@@ -26,6 +27,8 @@ import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
 
 public class SupplyManager {
+	
+	private static double recessionMagnitude = 0.0;
 
 	public double totalQuantity = 0;
 	public double price = 0;
@@ -42,11 +45,9 @@ public class SupplyManager {
 	public Normal operatingLeverageNormal = null;
 	public Beta learningRateDistrib = null;
 	public Normal entrantsNormal = null;
-	public Normal rDEfficiencyNormal = null;
-	public Normal innovationErrorNormal = null;
 	public Normal firstUnitCostNormal = null;
 
-	public static int periods;
+	public int periods;
 
 	private Context<Object> context;
 
@@ -58,6 +59,8 @@ public class SupplyManager {
 		price = (Double) GetParameter("priceOfSubstitute");
 
 		periods = (Integer) GetParameter("periods");
+
+		scheduleRecessions();
 
 		/* Read Time Cohorts limits */
 		String[] tmp = ((String) GetParameter("timeCohorts")).split(":");
@@ -83,11 +86,6 @@ public class SupplyManager {
 
 		/* Create distributions for initial variables of firms */
 
-		rDEfficiencyNormal = RandomHelper.createNormal(
-				(Double) GetParameter("rDEfficiencyMean"),
-				(Double) GetParameter("rDEfficiencyStdDev")
-						* (Double) GetParameter("rDEfficiencyMean"));
-
 		iniKNormal = RandomHelper.createNormal(
 				(Double) GetParameter("iniKMean"),
 				(Double) GetParameter("iniKStdDev")
@@ -100,9 +98,6 @@ public class SupplyManager {
 				(Double) GetParameter("entrantsMean"),
 				(Double) GetParameter("entrantsStdDev")
 						* (Double) GetParameter("entrantsMean"));
-
-		innovationErrorNormal = RandomHelper.createNormal(1.0,
-				(Double) GetParameter("innovationErrorStdDev"));
 
 		firstUnitCostNormal = RandomHelper.createNormal(
 				(Double) GetParameter("firstUnitCostMean"),
@@ -132,7 +127,58 @@ public class SupplyManager {
 
 	}
 
-	@ScheduledMethod(start = 1d, interval = 1, shuffle = true)
+	private void scheduleRecessions() {
+		double[] start, dur, recesMag;
+
+		// Read start of recessions
+		String[] tmp = ((String) GetParameter("recessionStart")).split(":");
+		start = new double[tmp.length];
+		for (int i = 0; i < tmp.length; i++) {
+			start[i] = new Double(tmp[i]);
+		}
+
+		// Read Duration of recessions
+		tmp = ((String) GetParameter("recessionDuration")).split(":");
+		dur = new double[tmp.length];
+		for (int i = 0; i < tmp.length; i++) {
+			dur[i] = new Double(tmp[i]);
+		}
+
+		// Read magnitude of recessions
+		tmp = ((String) GetParameter("recessionMagnitude")).split(":");
+		recesMag = new double[tmp.length];
+		for (int i = 0; i < tmp.length; i++) {
+			recesMag[i] = new Double(tmp[i]);
+		}
+
+		// Schedule recessions
+		for (int i = 0; i < tmp.length; i++) {
+			ISchedule sch = RunEnvironment.getInstance().getCurrentSchedule();
+
+			// Set start
+			ScheduleParameters params = ScheduleParameters.createOneTime(
+					start[i] * periods, ScheduleParameters.FIRST_PRIORITY);
+			sch.schedule(params, this, "setRecesMagnitude", recesMag[i]);
+
+			// Set end
+			params = ScheduleParameters.createOneTime((start[i] + dur[i])
+					* periods, ScheduleParameters.FIRST_PRIORITY);
+			sch.schedule(params, this, "setRecesMagnitude", 0.0);
+
+		}
+
+	}
+
+	public static void setRecesMagnitude(double mag) {
+		recessionMagnitude = mag;
+	}
+	
+	public static double getRecesMagnitude() {
+		return recessionMagnitude;
+	}
+
+
+	@ScheduledMethod(start = 1d, interval = 1)
 	public void step() {
 
 		// Manage Entry
@@ -215,7 +261,7 @@ public class SupplyManager {
 		} else {
 			double tmpQ = 0.0;
 			for (Object f : firms) {
-				tmpQ += ((Firm) f).currentDecision.quantity;
+				tmpQ += ((Firm) f).currentQ;
 			}
 			totalQuantity = tmpQ;
 		}

@@ -25,26 +25,20 @@ public class Firm {
 
 	public static SupplyManager supplyManager;
 
-	public class Decision {
-		double quantity = 0.0;
-		double rD = 0.0;
-	}
-
 	private int timeCohort = 0;
 	private int opLevCohort = 0;
 
-	public Decision currentDecision;
-	public Decision nextDecision;
+	public double currentQ;
+	public double nextQ;
 
 	// Local state variables - change every period
-	private double performance = 0.0;
+	private double perPeriodPerformance = 0.0;
 	private double capital = 0.0;
 	private double acumQ = 0.0;
 	private double acumProfit = 0.0;
 
 	// Local firm variables - stable along firm life
 	private double firstUnitCost = 0.0;
-	private double rDEfficiency = 0.0;
 	private double operatingLeverage = 0.0;
 	private double expon = 0.0;
 	private double born = 0.0;
@@ -65,7 +59,6 @@ public class Firm {
 	private static double opLevStdDev;
 	private static double flexCostMean;
 	private static double flexCostStdDev;
-	private static double deprec;
 	private static double deprecPerPeriod;
 	private static double maxExtFundPerPeriod;
 	private static double invParam;
@@ -77,10 +70,6 @@ public class Firm {
 
 		context.add(this);
 
-		currentDecision = new Decision();
-		nextDecision = new Decision();
-		nextDecision.rD = 0.0;
-
 		born = GetTickCount();
 		timeCohort = getCohort(born, supplyManager.timeCohortLimits);
 
@@ -90,7 +79,7 @@ public class Firm {
 
 		capital = max((Double) GetParameter("minimumCapital"),
 				supplyManager.iniKNormal.nextDouble());
-		nextDecision.quantity = capital * capitalProductivityPerPeriod;
+		nextQ = capital * capitalProductivityPerPeriod;
 
 		operatingLeverage = min(1.0,
 				max(0.0, supplyManager.operatingLeverageNormal.nextDouble()));
@@ -98,13 +87,12 @@ public class Firm {
 				supplyManager.opLevCohortLimits);
 
 		// Initial perfomance is set to minPerformance
-		performance = minPerformance;
+		perPeriodPerformance = minPerformance;
 
 		// 0.5 < learning rate <= 1.0
 		double learningRate = min(1.0,
 				max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
-		rDEfficiency = max(0.0, supplyManager.rDEfficiencyNormal.nextDouble());
 
 	}
 
@@ -121,12 +109,15 @@ public class Firm {
 
 	public static void readParams() {
 		// Static Firm variables - identical for all firms
+
+		int periods = (Integer) GetParameter("periods");
+
 		capitalProductivityPerPeriod = (Double) GetParameter("capitalProductivity")
-				/ SupplyManager.periods;
+				/ periods;
 		minVarCost = (Double) GetParameter("minVarCost");
 		minCapital = (Double) GetParameter("minimumCapital");
 		costOfCapitalPerPeriod = (Double) GetParameter("costOfCapital")
-				/ SupplyManager.periods;
+				/ periods;
 
 		perfWeight = (Double) GetParameter("performanceWeight");
 		minPerformance = (Double) GetParameter("minimumPerformance");
@@ -140,18 +131,17 @@ public class Firm {
 		flexCostMean = (Double) GetParameter("flexibilityCostMean");
 		flexCostStdDev = (Double) GetParameter("flexibilityCostStdDev")
 				* flexCostMean;
-		deprec = (Double) GetParameter("depreciation");
-		deprecPerPeriod = deprec / SupplyManager.periods;
+		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
 		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding")
-				/ SupplyManager.periods;
+				/ periods;
 		invParam = (Double) GetParameter("investmentParam");
 
 		agentIDCounter = 1;
 	}
 
 	public boolean checkEntry() {
-		double expectedAnnualReturn = profit(nextDecision, getPrice())
-				* SupplyManager.periods / getCapital();
+		double expectedAnnualReturn = profit(nextQ, getPrice())
+				* supplyManager.periods / getCapital();
 
 		return (expectedAnnualReturn >= minPerformance);
 
@@ -159,18 +149,15 @@ public class Firm {
 
 	public double offer() {
 
-		currentDecision.quantity = Demand.getCapacityUsed()
-				* nextDecision.quantity;
+		currentQ = Demand.getCapacityUsed() * nextQ;
 
-		currentDecision.rD = nextDecision.rD;
-		return currentDecision.quantity;
+		return currentQ;
 
 	}
 
-	public double profit(Decision decision, double price) {
+	public double profit(double quantity, double price) {
 
-		return price * decision.quantity - totalProdCost(decision)
-				- totalNonProdCost(decision);
+		return price * quantity - totalProdCost(quantity) - totalNonProdCost();
 
 	}
 
@@ -179,12 +166,12 @@ public class Firm {
 	 * accumulated Q. See http://maaw.info/LearningCurveSummary.htm (Wright
 	 * model)
 	 */
-	private double totalProdCost(Decision decision) {
+	private double totalProdCost(double quantity) {
 
 		// Get Learning curve cost + productive minimum cost
 		double lc = firstUnitCost
-				* (pow(acumQ + decision.quantity, 1.0 + expon) - pow(acumQ,
-						1.0 + expon)) + minVarCost * decision.quantity;
+				* (pow(acumQ + quantity, 1.0 + expon) - pow(acumQ, 1.0 + expon))
+				+ minVarCost * quantity;
 
 		// Return flexibility adjusted value
 		return lc * operatingLeverageAdjustment();
@@ -210,9 +197,8 @@ public class Firm {
 
 	}
 
-	private double totalNonProdCost(Decision decision) {
-		return (costOfCapitalPerPeriod + deprecPerPeriod) * capital
-				+ decision.rD;
+	private double totalNonProdCost() {
+		return (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
 	}
 
 	/**
@@ -229,12 +215,14 @@ public class Firm {
 		boolean returnValue;
 
 		// Calculates profit & Performance
-		performance = perfWeight * performance + (1 - perfWeight) * getReturn();
+		perPeriodPerformance = perfWeight * perPeriodPerformance + (1 - perfWeight)
+				* getPerPeriodReturn();
 
 		// if it is an exit, returns false
+		double performance = perPeriodPerformance * supplyManager.periods;
 		returnValue = !(performance < minPerformance || capital < minCapital);
 
-		acumQ += currentDecision.quantity;
+		acumQ += currentQ;
 		acumProfit += getProfit();
 
 		return returnValue;
@@ -246,7 +234,7 @@ public class Firm {
 		double maxFunding = getProfit()
 				+ deprecPerPeriod
 				* capital
-				+ ((Demand.getSSMagnitude() > 0.0) ? 0.0
+				+ ((SupplyManager.getRecesMagnitude() > 0.0) ? 0.0
 						: (maxExtFundPerPeriod * capital));
 
 		double invest = min(maxFunding, capital
@@ -256,24 +244,7 @@ public class Firm {
 
 		capital = capital * (1.0 - deprecPerPeriod) + invest;
 
-		nextDecision.quantity = capital * capitalProductivityPerPeriod;
-
-		// Then new R&D is determined to optimize First unit cost.The maxFunding
-		// is relevant to speed up the process.
-		double optimalRD = pow(
-				firstUnitCost
-						/ rDEfficiency
-						* (pow(acumQ + nextDecision.quantity, 1.0 + expon) - pow(
-								acumQ, 1.0 + expon))
-						* operatingLeverageAdjustment(), 0.5) - 1.0;
-
-		double minRD = 1.0 / rDEfficiency - 1.0;
-
-		nextDecision.rD = max(minRD, min(maxFunding - invest, optimalRD));
-
-		// apply innovation
-		firstUnitCost *= 1.0 / ((nextDecision.rD + 1.0) * rDEfficiency)
-				* supplyManager.innovationErrorNormal.nextDouble();
+		nextQ = capital * capitalProductivityPerPeriod;
 
 	}
 
@@ -283,8 +254,7 @@ public class Firm {
 	 */
 	private double marginalCost() {
 
-		return (firstUnitCost * (1.0 + expon)
-				* pow(acumQ + currentDecision.quantity, expon) + minVarCost)
+		return (firstUnitCost * (1.0 + expon) * pow(acumQ + currentQ, expon) + minVarCost)
 				* operatingLeverageAdjustment()
 				+ (costOfCapitalPerPeriod + deprecPerPeriod)
 				/ capitalProductivityPerPeriod;
@@ -314,23 +284,23 @@ public class Firm {
 	}
 
 	public double getQuantity() {
-		return currentDecision.quantity;
+		return currentQ;
 	}
 
 	public double getProfit() {
-		return profit(currentDecision, getPrice());
+		return profit(getQuantity(), getPrice());
 	}
 
 	public double getPerformance() {
-		return performance;
+		return perPeriodPerformance;
 	}
 
-	public double getRD() {
-		return currentDecision.rD;
+	private double getPerPeriodReturn() {
+		return getProfit() / getCapital();
 	}
 
 	public double getReturn() {
-		return getProfit() * SupplyManager.periods / getCapital();
+		return getPerPeriodReturn() * supplyManager.periods;
 	}
 
 	public double getFirstUnitCost() {
@@ -366,7 +336,7 @@ public class Firm {
 	}
 
 	public double getTotalVarCost() {
-		return totalProdCost(currentDecision);
+		return totalProdCost(getQuantity());
 	}
 
 	public double getVarCost() {
@@ -378,7 +348,7 @@ public class Firm {
 	}
 
 	public double getTotalFixedCost() {
-		return totalNonProdCost(currentDecision);
+		return totalNonProdCost();
 	}
 
 	public double getFixedCostPerUnit() {

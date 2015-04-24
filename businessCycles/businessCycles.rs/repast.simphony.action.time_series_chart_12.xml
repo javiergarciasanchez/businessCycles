@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>MktShare</name>
+  <name>Profit</name>
   <dataSet>AgFirmsbyOpLev</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Market Share</chartTitle>
+  <chartTitle>Profit</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,21 +21,9 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>MarketShare_OL:1_T:1</string>
+      <string>Profit_OL:3_T:0</string>
       <SeriesData>
-        <label>MarketShare_OL:1_T:1</label>
-        <color>
-          <red>102</red>
-          <green>255</green>
-          <blue>102</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>MarketShare_OL:3_T:1</string>
-      <SeriesData>
-        <label>MarketShare_OL:3_T:1</label>
+        <label>Profit_OL:3_T:0</label>
         <color>
           <red>255</red>
           <green>102</green>
@@ -45,11 +33,23 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>MarketShare_OL:2_T:1</string>
+      <string>Profit_OL:2_T:0</string>
       <SeriesData>
-        <label>MarketShare_OL:2_T:1</label>
+        <label>Profit_OL:2_T:0</label>
         <color>
           <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Profit_OL:1_T:0</string>
+      <SeriesData>
+        <label>Profit_OL:1_T:0</label>
+        <color>
+          <red>102</red>
           <green>255</green>
           <blue>102</blue>
           <alpha>255</alpha>
