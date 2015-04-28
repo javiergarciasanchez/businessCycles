@@ -31,8 +31,8 @@
 		type="double" defaultValue="0.4" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="timeCohorts"
-		displayName="Time Cohorts Limits (Period Number sep by : - colon)"
-		type="java.lang.String" defaultValue="3:6" isReadOnly="false"
+		displayName='Time Cohorts Limits (Period Number sep by : - colon) or "Recessions"'
+		type="java.lang.String" defaultValue="0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="minimumPerformance" displayName="Minimum Performance"
 		type="double" defaultValue="0.0" isReadOnly="false"

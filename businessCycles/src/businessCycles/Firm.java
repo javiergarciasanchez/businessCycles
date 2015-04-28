@@ -98,6 +98,8 @@ public class Firm {
 
 	private int getCohort(double value, double[] cohortLimits) {
 
+		if (cohortLimits[0] == 0.0) return 0;
+		
 		for (int i = 0; i < cohortLimits.length; i++) {
 			if (value < cohortLimits[i])
 				return i + 1;

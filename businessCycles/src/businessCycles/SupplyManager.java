@@ -27,7 +27,7 @@ import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
 
 public class SupplyManager {
-	
+
 	private static double recessionMagnitude = 0.0;
 
 	public double totalQuantity = 0;
@@ -64,6 +64,9 @@ public class SupplyManager {
 
 		/* Read Time Cohorts limits */
 		String[] tmp = ((String) GetParameter("timeCohorts")).split(":");
+		if (tmp[0].equals("Recessions")) {
+			tmp = ((String) GetParameter("recessionStart")).split(":");
+		}
 		timeCohortLimits = new double[tmp.length];
 		for (int i = 0; i < tmp.length; i++) {
 			timeCohortLimits[i] = new Double(tmp[i]);
@@ -172,11 +175,10 @@ public class SupplyManager {
 	public static void setRecesMagnitude(double mag) {
 		recessionMagnitude = mag;
 	}
-	
+
 	public static double getRecesMagnitude() {
 		return recessionMagnitude;
 	}
-
 
 	@ScheduledMethod(start = 1d, interval = 1)
 	public void step() {
