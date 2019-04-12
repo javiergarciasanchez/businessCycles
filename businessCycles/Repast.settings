@@ -3,18 +3,18 @@
   <hashtable>
     <default>
       <loadFactor>0.75</loadFactor>
-      <threshold>3</threshold>
+      <threshold>5</threshold>
     </default>
+    <int>7</int>
     <int>5</int>
-    <int>5</int>
+    <string>SettingsRegistryId</string>
+    <string>Repast.registry</string>
     <string>Spreadsheet.licenseAccepted</string>
     <boolean>true</boolean>
     <string>SettingsFileName</string>
     <string>Repast.settings</string>
-    <string>SettingsRegistryId</string>
-    <string>Repast.registry</string>
     <string>LastLoadedScenario</string>
-    <string>C:\Users\jgsanchez\git\businessCycles\businessCycles\businessCycles.rs</string>
+    <string>C:\Users\javie\git\businessCycles\businessCycles\businessCycles.rs</string>
     <string>Spreadsheet.home</string>
     <string>C:\Program Files\Microsoft Office\Office15\EXCEL.EXE</string>
   </hashtable>
