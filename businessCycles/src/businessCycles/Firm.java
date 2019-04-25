@@ -64,7 +64,7 @@ public class Firm {
 	private static double invParam;
 
 	private static long agentIDCounter;
-	private String agentID = "Firm " + (agentIDCounter++);
+	private long agentID = agentIDCounter++;
 
 	public Firm(Context<Object> context) {
 
@@ -314,9 +314,13 @@ public class Firm {
 	}
 
 	public String toString() {
-		return this.agentID;
+		return "Firm" + this.agentID;
 	}
 
+	public long getFirmNumID() {
+		return agentID;
+	}
+	
 	public double getBorn() {
 		return born;
 	}

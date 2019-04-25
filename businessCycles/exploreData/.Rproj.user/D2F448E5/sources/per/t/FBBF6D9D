@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556217966847.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "76344091",
+    "id" : "FBBF6D9D",
+    "lastKnownWriteTime" : 1556218002,
+    "last_content_update" : 1556218002926,
+    "path" : "C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R",
+    "project_path" : "process.R",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

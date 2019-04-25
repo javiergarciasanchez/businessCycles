@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556196505975.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2340675658",
+    "id" : "33E308",
+    "lastKnownWriteTime" : 1549835305,
+    "last_content_update" : 1549835305,
+    "path" : "C:/Users/javie/git/businessCycles/businessCycles/exploreData/plotlyDraw.R",
+    "project_path" : "plotlyDraw.R",
+    "properties" : {
+        "cursorPosition" : "34,44",
+        "scrollLine" : "21"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
