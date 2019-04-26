@@ -23,6 +23,18 @@ fsc = inner_join(f, select(p, "run", relevantParams), by="run")
 index = c("run",'tick',"FirmNumID", relevantParams, "random_seed")
 vars = names(fsc)[!(names(fsc) %in% index)]
 
+# Add quantiles
+groupKey = c(relevantParams, "run", "tick")
+
+fscG = fsc %>% 
+  group_by(run, tick,
+           recessionDuration, recessionMagnitude, recessionStart)
+
+fscG2 = fsc %>% 
+  group_by_at(.vars = vars(one_of(groupKey)))
+
+fscQ = fscG %>% mutate(OLF = ntile(OperatingLeverage, 3))
+
 # Calculate differences from base scenario (Base scneario: the one with 0 recession magnitude)
 fBase = filter(fsc, recessionMagnitude == 0)
 fSS = filter(fsc, recessionMagnitude != 0)
