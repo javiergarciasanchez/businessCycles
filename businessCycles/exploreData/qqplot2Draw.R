@@ -3,7 +3,7 @@ library(ggplot2)
 
 #Set working Directory
 #path <- "C:/Users/javie/git/businessCycles/businessCycles/BusinessC_ExploreD/R"
-path <- "C:/Users/javie/OneDrive - AUSTRAL/Investigación - JGS/Penrosian version of Recessions and Comp Leapfroging/SMJ/R&R/Data"
+path <- "C:/Users/javie/OneDrive - AUSTRAL/Investigaci?n - JGS/Penrosian version of Recessions and Comp Leapfroging/SMJ/R&R/Data"
 setwd(path)
 
 #load csv

@@ -5,21 +5,22 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "538727421",
+    "hash" : "4274223198",
     "id" : "6D18302F",
-    "lastKnownWriteTime" : 1556312687,
-    "last_content_update" : 1556312687572,
+    "lastKnownWriteTime" : 1556718450,
+    "last_content_update" : 1556718450817,
     "path" : "C:/Users/javie/git/businessCycles/businessCycles/exploreData/working.R",
     "project_path" : "working.R",
     "properties" : {
-        "cursorPosition" : "34,0",
-        "scrollLine" : "19",
+        "cursorPosition" : "13,42",
+        "docOutlineVisible" : "0",
+        "scrollLine" : "5",
         "tempName" : "Untitled1"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 5,
+    "relative_order" : 4,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

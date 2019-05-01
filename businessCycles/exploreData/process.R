@@ -1,18 +1,52 @@
 library(tidyverse)
+library(plotly)
 
-# Process data
-createScenariosTable = function(param){
-  #library(dplyr)  included in tidyverse
-  
-  sc = p %>% select( -"randomSeed") %>% unique()
-  
-  relevantParams = names(sc)[sc %>% summarise_all(funs(n_distinct(.))) > 1]
-  
-  sc = select(sc, relevantParams)
+#readFiles
+path = "C:/Users/javie/git/businessCycles/businessCycles/output"
+setwd(path)
 
-}
+fileID = "2019.abr..30.17_01_26"
+#fileID = "2019.abr..25.18_14_16"
+f <- read_csv(paste0("Firms.", fileID, ".csv"))
+p <- read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
 
-addScenarioToData = function(f, p){
-  
-  
-}
+# Params not unique
+tmp = p %>% select(-"run", -"randomSeed") %>% unique()
+relevantParams = names(tmp)[tmp %>% summarise_all(funs(n_distinct(.))) > 1]
+rm(tmp)
+
+#Firms with Scenarios (relevant parameters values) and Quantiles
+fsc = inner_join(f, select(p, "run", relevantParams), by="run") %>%
+  mutate(sc = ifelse(recessionMagnitude == 0,
+                     "Base",
+                     paste0("S:", recessionStart,
+                            " M:", recessionMagnitude,
+                            " D:", recessionDuration)))
+
+
+# Add quantiles
+fscQ = fsc %>%
+  group_by(run, tick) %>%
+  mutate(OLQ = ntile(OperatingLeverage, 3),
+         QuantQ = ntile(Quantity, 3)) %>%
+  ungroup()
+
+# Distinguish between index columns and value columns
+indexVars = c("run",'tick', "FirmNumID", relevantParams, "random_seed")
+groupVars = c("OLQ", "QuantQ", "sc")
+modelVars = names(fsc)[!(names(fsc) %in% c(indexVars, groupVars))]
+
+
+# Calculate differences from base scenario (Base scneario: the one with 0 recession magnitude)
+fBase = filter(fscQ, recessionMagnitude == 0)
+fscQSS = filter(fscQ, recessionMagnitude != 0)
+tmpKey = indexVars[!(indexVars %in% c("run", "recessionMagnitude"))]
+fDiff = full_join(fscQSS, fBase, by = tmpKey)
+rm(tmpKey)
+
+varsX = sapply(modelVars, function(x) paste0(x, ".x"))
+varsY = sapply(modelVars, function(x) paste0(x, ".y"))
+varsD = sapply(modelVars, function(x) paste0(x, ".d"))
+fDiff[varsD]= fDiff[varsX]-fDiff[varsY]
+
+fDiff = fDiff %>% rename(recessionMagnitude = recessionMagnitude.x)

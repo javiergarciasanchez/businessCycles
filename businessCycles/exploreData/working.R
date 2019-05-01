@@ -1,79 +1,67 @@
-library(tidyverse)
-library(plotly)
-
-#readFiles
-path = "C:/Users/javie/git/businessCycles/businessCycles/output"
-setwd(path)
-  
-#library(readr) included in tidyverse
-
-fileID = "2019.abr..25.18_14_16"
-f <- read_csv(paste0("Firms.", fileID, ".csv"))
-p <- read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
-
-# Params not unique
-tmp = p %>% select(-"run", -"randomSeed") %>% unique()
-relevantParams = names(tmp)[tmp %>% summarise_all(funs(n_distinct(.))) > 1]
-rm(tmp)
-
-#Firms with Scenarios (relevant parameters values)
-fsc = inner_join(f, select(p, "run", relevantParams), by="run")
-
-# Distinguish between index columns and value columns
-index = c("run",'tick',"FirmNumID", relevantParams, "random_seed")
-vars = names(fsc)[!(names(fsc) %in% index)]
-
-# Add quantiles
-groupKey = c(relevantParams, "run", "tick")
-
-fscG = fsc %>% 
-  group_by(run, tick,
-           recessionDuration, recessionMagnitude, recessionStart)
-
-fscG2 = fsc %>% 
-  group_by_at(.vars = vars(one_of(groupKey)))
-
-fscQ = fscG %>% mutate(OLF = ntile(OperatingLeverage, 3))
-
-# Calculate differences from base scenario (Base scneario: the one with 0 recession magnitude)
-fBase = filter(fsc, recessionMagnitude == 0)
-fSS = filter(fsc, recessionMagnitude != 0)
-join_key = index[!(index %in% c("run","recessionMagnitude"))]
-
-fDiff = full_join(fSS, fBase, by = join_key)
-varsX = sapply(vars, function(x) paste0(x, ".x"))
-varsY = sapply(vars, function(x) paste0(x, ".y"))
-varsD = sapply(vars, function(x) paste0(x, ".d"))
-
-fDiff[varsD] = fDiff[varsX]-fDiff[varsY]
-fDiff = fDiff %>% rename(recessionMagnitude = recessionMagnitude.x)
-
-#Keep only Difference columns
-shortFDiff = fDiff %>% select(join_key, vars, "run.x", "recessionMagnitude", "run.y")
-
-# Add Firm string labels  
-fDiff["FirmID"] = sapply(fDiff["FirmNumID"], function(x) paste0("F:", x))
-
-# Explore data
-fDiff %>%
-  filter(recessionMagnitude==0.3,
-         recessionStart == 25,
-         recessionDuration == 1,
-         random_seed == 1,
-         FirmNumID == 141,
-         tick > 20) %>%
-  select("tick", "run.x", "run.y", "FirmNumID", starts_with("Profit"))
-
-inner_join(fsc %>% filter(tick == 24 & recessionMagnitude > 0 & recessionStart == 25),
-           fsc %>% filter(tick == 27, recessionMagnitude > 0 & recessionStart == 25),
-           by=c("run","FirmNumID")) %>%
-  select("run", "FirmNumID", "Profit.x", "Profit.y")
-
 #Drawing
+
+
+graph = fDiff %>% 
+  filter(
+    recessionMagnitude==0.01
+#         recessionStart == 25,
+#         recessionDuration == 1,
+#         tick > 20, tick < 31,
+#         FirmNumID == 35,
+#         OLQ.x ==3
+#         random_seed == 1
+         ) %>%
+  group_by(sc.x, tick, OLQ.x, random_seed) %>%
+  summarise(tmpSum = mean(Quantity.d/Quantity.x, na.rm = TRUE)) %>%
+  group_by(sc.x, tick, OLQ.x) %>%
+  summarise(OLQ_Q = mean(tmpSum, na.rm = TRUE)) %>%
+  ggplot(aes(tick, OLQ_Q, color = factor(OLQ.x))) +
+  geom_line() +
+  facet_wrap(~sc.x, ncol = 2)
+
+plot(graph)  
+
+fscQ %>% 
+  filter(
+    #recessionMagnitude==0.01,
+         recessionStart == 25,
+         recessionDuration == 1,
+         tick > 24, tick < 35,
+         OLQ ==3
+  ) %>%
+#  group_by(tick, sc) %>%
+#  summarise(Profit = mean(Profit)) %>%
+  ggplot(aes(tick, Profit, color = factor(FirmNumID))) +
+  geom_line() +
+  theme(legend.position = "none")+
+  facet_wrap(~sc, ncol = 2)
+
+fDiff %>% 
+  filter(recessionMagnitude==0.01,
+         recessionStart == 25,
+         recessionDuration == 1,
+         tick > 24, tick < 35
+         #         random_seed == 16
+  ) %>%
+  group_by(sc.x, tick, OLQ.x, random_seed) %>%
+  summarise(OLQ_cant_r = n()) %>%
+  group_by(sc.x, tick, OLQ.x) %>%
+  summarise(OLQ_cant = mean(OLQ_cant_r)) %>%
+  ggplot(aes(tick, OLQ_cant, group = factor(OLQ.x), color = factor(OLQ.x))) +
+  geom_line()
+
+fscQ %>% 
+  ggplot(aes(tick, Profit, group = factor(OLQ), color = factor(OLQ))) +
+  geom_line()+
+  geom_line(aes(x = tick, y = mean(Profit), )) +
+  facet_wrap(~sc, ncol = 5)
+
+
 fDiff %>%
   filter(recessionMagnitude==0.3,
          recessionStart == 25,
          recessionDuration == 1,
-         random_seed == 1) %>%
-  plot_ly( x = ~tick) %>% 
-  add_lines( y = ~AcumProfit)
+         random_seed == 16) %>%
+  plot_ly( x = ~tick, y = ~Profit.d,
+           type= "scatter",
+           mode = "lines")
