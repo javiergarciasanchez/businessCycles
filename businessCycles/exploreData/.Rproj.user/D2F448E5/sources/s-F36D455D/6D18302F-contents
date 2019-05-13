@@ -1,0 +1,87 @@
+#Load functions
+source('C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R')
+
+#readFiles
+path = "C:/Users/javie/git/businessCycles/businessCycles/output"
+setwd(path)
+
+fileID = "2019.abr..30.17_01_26"
+#fileID = "2019.abr..25.18_14_16"
+f <- read_csv(paste0("Firms.", fileID, ".csv"))
+p <- read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
+
+relevantVars = names(f)[!(names(f) %in% c("run", "tick", "FirmNumID", "random_seed"))]
+
+relevantParams = getRelevantParams(p)
+
+fsc = f %>% addScenarios(p, relevantParams)
+
+fDiff = fsc %>% addDifferences(relevantParams, relevantVars)
+
+fDiffQ = fDiff %>% addQuantiles(4)
+
+
+#Drawing
+#filtering
+filteredData = fDiffQ %>%
+  filter(
+    recessionMagnitude==0.1,
+    OLQ == 1 | OLQ == 4
+    #         recessionStart == 25,
+    #         recessionDuration == 1,
+    #         tick > 20, tick < 31,
+    #         FirmNumID == 35,
+    #         random_seed == 1
+  )
+
+library(plotly)
+
+
+#Quantity %
+graphQ = filteredData %>%
+  group_by(sc, tick, OLQ, random_seed) %>%
+  summarise(tmpSum = mean(Quantity.d/Quantity.y *100, na.rm = TRUE)) %>%
+  group_by(sc, tick, OLQ) %>%
+  summarise(OLQ_Q = mean(tmpSum, na.rm = TRUE)) %>%
+  ggplot(aes(tick, OLQ_Q, color = factor(OLQ))) +
+  geom_line() +
+  facet_wrap(~sc, ncol = 2)
+dev.new()
+plot(graphQ)  
+
+#Med Cost
+graphMS = filteredData %>%
+  group_by(sc, tick, OLQ, random_seed) %>%
+  summarise(tmpSum = mean(MedCost.d/MedCost.y * 100, na.rm = TRUE)) %>%
+  group_by(sc, tick, OLQ) %>%
+  summarise(OLQ_C = mean(tmpSum, na.rm = TRUE)) %>%
+  ggplot(aes(tick, OLQ_C, color = factor(OLQ))) +
+  geom_line() +
+  facet_wrap(~sc, ncol = 2)
+dev.new()
+plot(graphMS)
+
+fDiff %>% 
+  filter(recessionMagnitude==0.01,
+         recessionStart == 25,
+         recessionDuration == 1,
+         tick > 24, tick < 35
+         #         random_seed == 16
+  ) %>%
+  group_by(sc.x, tick, OLQ.x, random_seed) %>%
+  summarise(OLQ_cant_r = n()) %>%
+  group_by(sc.x, tick, OLQ.x) %>%
+  summarise(OLQ_cant = mean(OLQ_cant_r)) %>%
+  ggplot(aes(tick, OLQ_cant, group = factor(OLQ.x), color = factor(OLQ.x))) +
+  geom_line()
+
+
+
+fDiff %>%
+  filter(recessionMagnitude==0.3,
+         recessionStart == 25,
+         recessionDuration == 1,
+         random_seed == 16) %>%
+  plot_ly( x = ~tick, y = ~Profit.d,
+           type= "scatter",
+           mode = "lines")

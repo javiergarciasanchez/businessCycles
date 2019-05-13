@@ -1,0 +1,73 @@
+library(tidyverse)
+
+# Params not unique
+getRelevantParams = function(p) {
+  tmp = p %>% select(-"run", -"randomSeed") %>% summarise_all(funs(n_distinct(.)))
+  relevantParams = names(tmp)[tmp > 1]
+}
+
+#Firms with Scenarios (relevant parameters values) and Quantiles
+addScenarios = function(f, p, relevantParams) {
+  tmp = inner_join(f, select(p, "run", relevantParams), by="run") %>%
+    mutate(sc = ifelse(recessionMagnitude == 0,
+                       "Base",
+                       paste0("S:", recessionStart,
+                              " M:", recessionMagnitude,
+                              " D:", recessionDuration)))
+  
+  tmp$sc = factor(tmp$sc)
+  
+  return(tmp)
+}
+
+
+# Calculate differences of relevant variables respect base scenario
+# df should include scenario columns
+addDifferences = function(df, relevantParams, relevantVars ) {
+  
+  df = df %>% select(run, tick, FirmNumID, random_seed, relevantParams, sc, relevantVars)
+  
+  dfBase = filter(df, recessionMagnitude == 0)
+  dfSS = filter(df, recessionMagnitude != 0)
+  
+  tmpKey = c("tick", "FirmNumID", "random_seed", relevantParams)
+  tmpKey = tmpKey[tmpKey != "recessionMagnitude"]
+  
+  dfDiff = full_join(dfSS, dfBase, by = tmpKey)
+  
+  varsSS = sapply(relevantVars, function(x) paste0(x, ".x"))
+  varsBase = sapply(relevantVars, function(x) paste0(x, ".y"))
+  varsD = sapply(relevantVars, function(x) paste0(x, ".d"))
+  dfDiff[varsD]= dfDiff[varsSS] - dfDiff[varsBase]
+ 
+  # take out .x of variable names
+  dfDiff %>% set_names(~sub("\\.x","",.))
+  
+}
+
+# Add quantiles, according to Operating Leverage and Quantity at birth
+# Should have Age, OperatingLeverage and Quantity
+addQuantiles = function(df, n) {
+  q = df %>%
+    filter(Age == 0) %>%
+    group_by(run, tick) %>%
+    mutate(OLQ = ntile(OperatingLeverage, n),
+           QQ = ntile(Quantity, n)) %>%
+    ungroup() %>%
+    select(run, FirmNumID, OLQ, QQ)
+  
+  q$OLQ = factor(q$OLQ)
+  q$QQ = factor(q$QQ)
+  
+  inner_join(df, q, c("run", "FirmNumID"))
+  
+}
+
+#Calculates stats by group
+sumByQuantiles = function(df) {
+  df %>%
+    group_by(sc, tick, OLQ, random_seed) %>%
+    summarise(tmpSum = mean(Quantity.d/Quantity.y *100, na.rm = TRUE)) %>%
+    group_by(sc, tick, OLQ) %>%
+    summarise(OLQ_Q = mean(tmpSum, na.rm = TRUE))
+}

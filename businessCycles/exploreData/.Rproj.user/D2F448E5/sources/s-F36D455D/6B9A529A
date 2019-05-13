@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556659269729.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6B9A529A",
+    "lastKnownWriteTime" : 1556823355,
+    "last_content_update" : 1556823355313,
+    "path" : "C:/Users/javie/git/businessCycles/businessCycles/exploreData/workingExplo.R",
+    "project_path" : "workingExplo.R",
+    "properties" : {
+        "cursorPosition" : "69,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

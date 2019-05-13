@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3093137171",
+    "hash" : "0",
     "id" : "FBBF6D9D",
-    "lastKnownWriteTime" : 1556654935,
-    "last_content_update" : 1556654935681,
+    "lastKnownWriteTime" : 1556908606,
+    "last_content_update" : 1556908606845,
     "path" : "C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R",
     "project_path" : "process.R",
     "properties" : {
-        "cursorPosition" : "51,67",
-        "scrollLine" : "31"
+        "cursorPosition" : "49,15",
+        "scrollLine" : "42"
     },
     "read_only" : false,
     "read_only_alternatives" : [

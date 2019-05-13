@@ -5,7 +5,7 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2860168241",
+    "hash" : "0",
     "id" : "FC139701",
     "lastKnownWriteTime" : 1556649010,
     "last_content_update" : 1556649010290,
@@ -13,7 +13,7 @@
     "project_path" : "qqplot2Draw.R",
     "properties" : {
         "cursorPosition" : "30,25",
-        "scrollLine" : "23"
+        "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [

@@ -1,0 +1,23 @@
+library(plotly)
+
+filteredData %>%
+  group_by(sc, tick, OLQ, random_seed) %>%
+  summarise(tmpSum = mean(Quantity.d/Quantity.y *100, na.rm = TRUE)) %>%
+  group_by(sc, tick, OLQ) %>%
+  summarise(OLQ_Q = mean(tmpSum, na.rm = TRUE)) %>%
+  
+  transform(id = as.integer(factor(sc))) %>%
+  plot_ly(x = ~tick, y = ~OLQ_Q, color = ~OLQ, type = 'scatter', mode = 'line',
+          yaxis = ~paste0("y", id))%>%
+#    add_lines() %>%
+    subplot(nrows = 2, shareX = TRUE)
+
+idxVars = c("sc", "random_seed", "tick", "FirmNumID", "OLQ", "QQ")
+varsToDraw = c("Quantity", "Profit")
+fDiffQ %>%
+  select(idxVars, varsToDraw) %>%
+  gather(varToDraw, value, varsToDraw) %>%
+  plot_ly(x = ~tick, y=~value, color = ~OLQ, type = "scatter", mode="line")
+
+
+                  
