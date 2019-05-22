@@ -6,12 +6,12 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>repast.simphony.systemdynamics.diagram.builder</name>
+			<name>repast.simphony.statecharts.diagram.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>repast.simphony.statecharts.diagram.builder</name>
+			<name>repast.simphony.systemdynamics.diagram.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -30,6 +30,6 @@
 		<nature>org.eclipse.jdt.groovy.core.groovyNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>repast.simphony.eclipse.repast_simphony_nature</nature>
-		<nature>repast.simphony.statecharts.diagram.repast_simphony_statechart_nature</nature>		
+		<nature>repast.simphony.statecharts.diagram.repast_simphony_statechart_nature</nature>
 	</natures>
 </projectDescription>

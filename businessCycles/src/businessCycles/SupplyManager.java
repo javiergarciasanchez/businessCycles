@@ -263,7 +263,7 @@ public class SupplyManager {
 		} else {
 			double tmpQ = 0.0;
 			for (Object f : firms) {
-				tmpQ += ((Firm) f).currentQ;
+				tmpQ += ((Firm) f).getQuantity();
 			}
 			totalQuantity = tmpQ;
 		}

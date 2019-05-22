@@ -3,7 +3,9 @@ library(plotly)
 
 # Params not unique
 getRelevantParams = function(p) {
-  tmp = p %>% select(-"run", -"randomSeed") %>% summarise_all(funs(n_distinct(.)))
+  tmp = p %>% select(-"run", -"randomSeed") %>%
+    summarise_all(funs(n_distinct(.)))
+  
   relevantParams = names(tmp)[tmp > 1]
 }
 
@@ -58,12 +60,14 @@ addQuantiles = function(df, n) {
     filter(Age == 0) %>%
     group_by(run, tick) %>%
     mutate(OLQ = ntile(OperatingLeverage, n),
-           QQ = ntile(Quantity, n)) %>%
+           QQ = ntile(Quantity, n),
+           OLQQ = paste0(OLQ, "-", QQ)) %>%
     ungroup() %>%
-    select(run, FirmNumID, OLQ, QQ)
+    select(run, FirmNumID, OLQ, QQ, OLQQ)
   
   q$OLQ = factor(q$OLQ)
   q$QQ = factor(q$QQ)
+  q$OLQQ = factor(q$OLQQ)
   
   inner_join(df, q, c("run", "FirmNumID"))
   
@@ -75,13 +79,12 @@ addQuantiles = function(df, n) {
 # keepVars: columns that should be kept, but are not part of index nor diffVars
 # varDif: variable to separate x and y
 # percent: TRUE or FALSE. Percentage or absolute differenc
+# All columns that are not in diffVars, keepVars o varDif are considered part of index to join
 addDiff = function(df, diffVars, keepVars, varDif, y, percent = TRUE){
-  
-  idxVars = setdiff(names(df), diffVars)
   
   df.y = filter(df, (!!as.name(varDif))  == y)
   
-  tmpKey = setdiff(idxVars, c(keepVars, varDif))
+  tmpKey = setdiff(names(df), c(diffVars, keepVars, varDif))
   dfD = full_join(df, df.y, by = tmpKey)
   
   vars.x = sapply(diffVars, function(x) paste0(x, ".x"))
@@ -102,20 +105,36 @@ addDiff = function(df, diffVars, keepVars, varDif, y, percent = TRUE){
 
 }
 
-#Calculates stats by group
-sumByQuantiles = function(df, Q, varsToSum, relevantParams) {
 
+#Add data by Quantile
+addDataByQuantiles = function(df, Q, varsToDraw, relevantParams){
+  df %>%
+    
+    select_at(vars(relevantParams, "tick", Q, "FirmNumID", "random_seed", varsToDraw)) %>%
+    group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
+    mutate(N = n()) %>%
+    
+    group_by_at(vars(relevantParams, Q, "random_seed")) %>%
+    mutate(maxN = max(N, na.rm = TRUE),
+           NToMaxN = N/maxN) %>%
+    
+    ungroup()
+  
+}
+
+#Calculates stats by group
+meanByQuantiles = function(df, Q, varsToSum, relevantParams) {
+  
   df %>%
     
     group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
-    mutate(N = n()) %>%
-    summarise_at( vars(varsToSum, "N"), mean, na.rm = TRUE) %>%
-  
+    summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
+    
     group_by_at(vars(relevantParams, "tick", Q)) %>%
-    summarise_at( vars(varsToSum, "N"), mean, na.rm = TRUE) %>%
+    summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
     
     ungroup()
-    
+  
 }
 
 # Draw variables

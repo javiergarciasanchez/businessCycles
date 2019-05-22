@@ -27,6 +27,13 @@
     <string>FirmNumID</string>
     <string>Profit</string>
     <string>Quantity</string>
+    <string>OpLevMean</string>
+    <string>OpLevStdDev</string>
+    <string>MaxFunding</string>
+    <string>Invest</string>
+    <string>FlexibilityCost</string>
+    <string>MarkUp</string>
+    <string>OptimalMarkUp</string>
   </sourceIds>
   <fileName>Firms.csv</fileName>
   <addTimeStamp>true</addTimeStamp>
