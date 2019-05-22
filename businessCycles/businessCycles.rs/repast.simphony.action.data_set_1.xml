@@ -1,7 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.6.0">
-  <name>Firms</name>
+  <name>Supply</name>
   <type>NON_AGGREGATE</type>
-  <sourceType>businessCycles.Firm</sourceType>
+  <sourceType>businessCycles.SupplyManager</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>true</inclBatchRun>
   <inclRandomSeed>true</inclRandomSeed>
@@ -12,224 +12,64 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1015643486</hashCode>
+    <hashCode>-406008279</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>OperatingLeverageAdjustment</string>
+      <string>BornFirms</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OperatingLeverageAdjustment</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOperatingLeverageAdjustment</methodName>
+        <id>BornFirms</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getBornFirms</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>AcumProfit</string>
+      <string>Dead</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>AcumProfit</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getAcumProfit</methodName>
+        <id>Dead</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getDead</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>AcumQuantity</string>
+      <string>TotalFBeforeExit</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>AcumQuantity</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getAcumQuantity</methodName>
+        <id>TotalFBeforeExit</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalFBeforeExit</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Age</string>
+      <string>TotalFirms</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Age</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getAge</methodName>
+        <id>TotalFirms</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalFirms</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Born</string>
+      <string>TotalQBeforeExit</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Born</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getBorn</methodName>
+        <id>TotalQBeforeExit</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalQBeforeExit</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Capital</string>
+      <string>TotalQuantity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Capital</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getCapital</methodName>
+        <id>TotalQuantity</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalQuantity</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>FirstUnitCost</string>
+      <string>toString</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FirstUnitCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFirstUnitCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>FixedCostPerUnit</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FixedCostPerUnit</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFixedCostPerUnit</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MarketShare</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MarketShare</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMarketShare</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MedCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MedCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMedCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OperatingLeverage</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OperatingLeverage</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOperatingLeverage</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Price</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Price</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getPrice</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>TotalFixedCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>TotalFixedCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getTotalFixedCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>TotalVarCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>TotalVarCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getTotalVarCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>VarCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>VarCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getVarCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>VarCostWoAdj</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>VarCostWoAdj</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getVarCostWoAdj</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>offer</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>offer</id>
-        <className>businessCycles.Firm</className>
-        <methodName>offer</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>FirmNumID</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FirmNumID</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFirmNumID</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Profit</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Profit</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getProfit</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Quantity</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Quantity</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getQuantity</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OpLevMean</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OpLevMean</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOpLevMean</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OpLevStdDev</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OpLevStdDev</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOpLevStdDev</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MaxFunding</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MaxFunding</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMaxFunding</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Invest</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Invest</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getInvest</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>FlexibilityCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FlexibilityCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFlexibilityCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MarkUp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MarkUp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMarkUp</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OptimalMarkUp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OptimalMarkUp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOptimalMarkUp</methodName>
+        <id>toString</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>toString</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

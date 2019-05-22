@@ -15,7 +15,6 @@ package businessCycles;
 import java.util.ArrayList;
 import java.util.List;
 
-import cern.jet.stat.*;
 import cern.jet.random.*;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
@@ -38,9 +37,6 @@ public class SupplyManager {
 	public double totalQBeforeExit = 0;
 	public double totalFBeforeExit = 1.0;
 
-	public double[] timeCohortLimits = null;
-	public double[] opLevCohortLimits = null;
-
 	public Normal iniKNormal = null;
 	public Normal operatingLeverageNormal = null;
 	public Beta learningRateDistrib = null;
@@ -62,33 +58,10 @@ public class SupplyManager {
 
 		scheduleRecessions();
 
-		/* Read Time Cohorts limits */
-		String[] tmp = ((String) GetParameter("timeCohorts")).split(":");
-		if (tmp[0].equals("Recessions")) {
-			tmp = ((String) GetParameter("recessionStart")).split(":");
-		}
-		timeCohortLimits = new double[tmp.length];
-		for (int i = 0; i < tmp.length; i++) {
-			timeCohortLimits[i] = Double.valueOf(tmp[i]);
-		}
-
-		/*
-		 * Set Operating Leverage Cohorts Limits
-		 */
+		/* Create distributions for initial variables of firms */
 		double opLevMean = (Double) GetParameter("operatingLeverageMean");
 		double opLevStdDev = (Double) GetParameter("operatingLeverageStdDev")
 				* opLevMean;
-		int cohorts = (Integer) GetParameter("opLevCohorts");
-		opLevCohortLimits = new double[cohorts - 1];
-
-		for (int i = 0; i < cohorts - 1; i++) {
-			opLevCohortLimits[i] = Probability.normalInverse((i + 1.0)
-					/ cohorts)
-					* opLevStdDev + opLevMean;
-		}
-
-		/* Create distributions for initial variables of firms */
-
 		iniKNormal = RandomHelper.createNormal(
 				(Double) GetParameter("iniKMean"),
 				(Double) GetParameter("iniKStdDev")

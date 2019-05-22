@@ -5,7 +5,7 @@ source('C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R')
 path = "C:/Users/javie/git/businessCycles/businessCycles/output"
 setwd(path)
 
-fileID = "2019.may..22.11_41_34"
+fileID = "2019.may..22.16_05_37"
 
 f = read_csv(paste0("Firms.", fileID, ".csv"))
 p = read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
@@ -18,12 +18,13 @@ relevantParams = getRelevantParams(p)
 fscQ = f %>% 
   addScenarios(p, relevantParams) %>%
   addQuantiles(3) %>%
-  mutate(optMUDivMU = OptimalMarkUp / MarkUp)
+  mutate(optMUDivMU = OptimalMarkUp / MarkUp,
+         marg = MarkUp - 1)
 
-relevantVars = c(relevantVars, "optMUDivMU")
+relevantVars = c(relevantVars, "optMUDivMU", "marg")
 
 # Drawing
-varsToDraw = c("Quantity", "MarketShare", "MedCost","VarCost" )
+varsToDraw = c("Quantity", "MarketShare", "MedCost","marg" )
 #varsToDraw = c("OpLevMean","OpLevStdDev", "OperatingLeverage", "MaxFunding", "Invest", "FlexibilityCost")
 #varsToDraw = c("OperatingLeverage", "MaxFunding", "Invest")
 #varsToDraw = c("Invest", "OptimalMarkUp", "MarkUp", "optMUDivMU")
@@ -35,10 +36,7 @@ calcVarsToDraw = c("N")
 fscQ %>%
   
   filter(OLQ != 2,
-         recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
-         Born < recessionStart,
-         recessionStart == 15,
-         tick > 10, tick < 25
+         recessionMagnitude == 0.1 | recessionMagnitude == 0.0
          ) %>%
   
   addDataByQuantiles("OLQ", varsToDraw, relevantParams) %>%
@@ -55,10 +53,7 @@ calcVarsToDraw.d = sapply(calcVarsToDraw, function(x) paste0(x, ".d"))
 fQD = fscQ %>% 
   # Choose scenarios to draw
   filter(OLQ != 2, 
-         recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
-         Born < recessionStart,
-         recessionStart == 15,
-         tick > 10, tick < 25
+         recessionMagnitude == 0.1 | recessionMagnitude == 0.0
          ) %>%
   
   # Drop variables not to be drawn
@@ -76,9 +71,14 @@ fQD = fscQ %>%
   # Add percentage variation of number of firm per quantile respect to base scenario
   addDiff(calcVarsToDraw, varsToDraw.d, "recessionMagnitude", 0, percent = TRUE) %>%
   set_names(~sub("\\.x","",.)) %>%
+
+  # Eliminate base scenario no difference against itself
+  filter(recessionMagnitude != 0) %>%
   
   # Keep vars to draw
   select_at(vars(relevantParams, "tick", "OLQ", varsToDraw.d, calcVarsToDraw.d))
+
+
 
 fQD %>% drawVars(OLQ)
 

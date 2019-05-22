@@ -24,10 +24,6 @@ import repast.simphony.context.Context;
 public class Firm {
 
 	public static SupplyManager supplyManager;
-
-	private int timeCohort = 0;
-	private int opLevCohort = 0;
-
 	
 	// Local state variables - change every period
 	private double quantity;
@@ -77,7 +73,6 @@ public class Firm {
 		context.add(this);
 
 		born = GetTickCount();
-		timeCohort = getCohort(born, supplyManager.timeCohortLimits);
 
 		// A minimum first unit cost is set to 10% of mean
 		firstUnitCost = max(0.1 * (Double) GetParameter("firstUnitCostMean"),
@@ -86,7 +81,6 @@ public class Firm {
 		capital = max((Double) GetParameter("minimumCapital"), supplyManager.iniKNormal.nextDouble());
 
 		operatingLeverage = min(1.0, max(0.0, supplyManager.operatingLeverageNormal.nextDouble()));
-		opLevCohort = getCohort(operatingLeverage, supplyManager.opLevCohortLimits);
 
 		// Initial perfomance is set to minPerformance
 		perPeriodPerformance = minPerformance;
@@ -94,20 +88,6 @@ public class Firm {
 		// 0.5 < learning rate <= 1.0
 		double learningRate = min(1.0, max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
-
-	}
-
-	private int getCohort(double value, double[] cohortLimits) {
-
-		if (cohortLimits[0] == 0.0)
-			return 0;
-
-		for (int i = 0; i < cohortLimits.length; i++) {
-			if (value < cohortLimits[i])
-				return i + 1;
-		}
-
-		return cohortLimits.length + 1;
 
 	}
 
@@ -363,14 +343,6 @@ public class Firm {
 
 	public double getCapital() {
 		return capital;
-	}
-
-	public int getTimeCohort() {
-		return timeCohort;
-	}
-
-	public int getOpLevCohort() {
-		return opLevCohort;
 	}
 
 	public double getMaxFunding() {

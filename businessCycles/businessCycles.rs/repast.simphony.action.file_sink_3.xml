@@ -1,40 +1,19 @@
 <repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.6.0">
-  <name>Firms</name>
-  <dataSet>Firms</dataSet>
+  <name>Supply</name>
+  <dataSet>Supply</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>OperatingLeverageAdjustment</string>
-    <string>AcumProfit</string>
-    <string>AcumQuantity</string>
-    <string>Age</string>
-    <string>Born</string>
-    <string>Capital</string>
-    <string>FirstUnitCost</string>
-    <string>FixedCostPerUnit</string>
-    <string>MarketShare</string>
-    <string>MedCost</string>
-    <string>OperatingLeverage</string>
-    <string>Price</string>
-    <string>TotalFixedCost</string>
-    <string>TotalVarCost</string>
-    <string>VarCost</string>
-    <string>VarCostWoAdj</string>
-    <string>offer</string>
+    <string>BornFirms</string>
+    <string>Dead</string>
+    <string>TotalFBeforeExit</string>
+    <string>TotalFirms</string>
+    <string>TotalQBeforeExit</string>
+    <string>TotalQuantity</string>
     <string>tick</string>
     <string>run</string>
     <string>random_seed</string>
-    <string>FirmNumID</string>
-    <string>Profit</string>
-    <string>Quantity</string>
-    <string>OpLevMean</string>
-    <string>OpLevStdDev</string>
-    <string>MaxFunding</string>
-    <string>Invest</string>
-    <string>FlexibilityCost</string>
-    <string>MarkUp</string>
-    <string>OptimalMarkUp</string>
   </sourceIds>
-  <fileName>Firms.csv</fileName>
+  <fileName>Supply.csv</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>
