@@ -18,7 +18,7 @@ public class Demand {
 		double annualizedQuantity = quantity
 				* (Integer) GetParameter("periods");
 
-		double tmpCrisisImpact = 1.0 - SupplyManager.getRecesMagnitude();
+		double tmpCrisisImpact = 1.0 - RecessionHandler.getRecesMagnitude();
 
 		double sub = (Double) GetParameter("priceOfSubstitute");
 		double param = (Double) GetParameter("demandParameter");
@@ -38,7 +38,7 @@ public class Demand {
 	}
 
 	public static double getCapacityUsed() {
-		double recMag = SupplyManager.getRecesMagnitude();
+		double recMag = RecessionHandler.getRecesMagnitude();
 
 		if (recMag == 0.0)
 			return 1.0;

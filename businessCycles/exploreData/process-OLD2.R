@@ -109,7 +109,7 @@ addDiff = function(df, diffVars, keepVars, varDif, y, percent = TRUE){
 
 
 #Add data by Quantile
-addDataByQuantiles = function(df, Q, relevantParams){
+addDataByQuantiles = function(df, Q, varsToDraw, relevantParams){
   df %>%
     
     #Data by Tick
@@ -120,8 +120,8 @@ addDataByQuantiles = function(df, Q, relevantParams){
     
     # Data by Random Seed
     group_by_at(vars(relevantParams, Q, "random_seed")) %>%
-    mutate(MaxN = max(N, na.rm = TRUE),
-           NToMaxN = N/MaxN) %>%
+    mutate(maxN = max(N, na.rm = TRUE),
+           NToMaxN = N/maxN) %>%
     
     ungroup()
   
@@ -130,40 +130,26 @@ addDataByQuantiles = function(df, Q, relevantParams){
 #Calculates stats by group
 meanByQuantiles = function(df, Q, varsToSum, relevantParams) {
   
-  if ("random_seed" %in% names(df)) {
+  df %>%
     
-    df %>%
-      
-      group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
-      summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
-      
-      group_by_at(vars(relevantParams, "tick", Q)) %>%
-      summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
-      
-      ungroup()
+    group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
+    summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
     
-  } else {
+    group_by_at(vars(relevantParams, "tick", Q)) %>%
+    summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
     
-    df %>%
-      
-      group_by_at(vars(relevantParams, "tick", Q)) %>%
-      summarise_at( vars(varsToSum), mean, na.rm = TRUE) %>%
-      
-      ungroup()
-    
-  }
-  
+    ungroup()
   
 }
 
 # Draw variables
-drawVars = function(df, relevantParams, v ){
+drawVars = function(df, v ){
   
   if (missing(v)){
     
     df %>%
       addScenariosNames() %>%
-      select_at(vars(-relevantParams)) %>%
+      select(-recessionMagnitude, -recessionStart, -recessionDuration) %>%
       
       gather(varToDraw, value, -c(sc, tick)) %>%
       
@@ -179,7 +165,7 @@ drawVars = function(df, relevantParams, v ){
     
     df %>%
       addScenariosNames() %>%
-      select_at(vars(-relevantParams)) %>%
+      select(-recessionMagnitude, -recessionStart, -recessionDuration) %>%
       
       gather(varToDraw, value, -c(sc, tick, !!v)) %>%
       

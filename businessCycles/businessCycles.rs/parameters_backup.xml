@@ -48,6 +48,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+				<parameter name="exitOnSS" displayName="Exit on Sudden Stop?" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
+		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
 						defaultValue="2.0" 
 						isReadOnly="false" 
@@ -61,7 +67,7 @@
 									
 		/>
 				<parameter name="minimumPerformance" displayName="Minimum Performance" type="double" 
-						defaultValue="-10000.0" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

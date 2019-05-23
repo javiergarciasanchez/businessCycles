@@ -123,7 +123,7 @@ public class Firm {
 		double expectedQ = Demand.getCapacityUsed() * capital * capitalProductivityPerPeriod;
 		
 		double expectedAnnualReturn = profit(expectedQ, getPrice()) *
-				supplyManager.periods / getCapital();
+				SupplyManager.periods / getCapital();
 
 		return (expectedAnnualReturn >= minPerformance);
 
@@ -199,7 +199,7 @@ public class Firm {
 		perPeriodPerformance = perfWeight * perPeriodPerformance + (1 - perfWeight) * getPerPeriodReturn();
 
 		// if it is an exit, returns false
-		double performance = perPeriodPerformance * supplyManager.periods;
+		double performance = perPeriodPerformance * SupplyManager.periods;
 		returnValue = !(performance < minPerformance || capital < minCapital);
 
 		acumQ += quantity;
@@ -212,7 +212,7 @@ public class Firm {
 	public void plan() {
 
 		maxFunding = getProfit() + deprecPerPeriod * capital
-				+ ((SupplyManager.getRecesMagnitude() > 0.0) ? 0.0 : (maxExtFundPerPeriod * capital));
+				+ ((RecessionHandler.getRecesMagnitude() > 0.0) ? 0.0 : (maxExtFundPerPeriod * capital));
 
 		invest = min(maxFunding, capital * (deprecPerPeriod + netInvestment()));
 
@@ -274,7 +274,7 @@ public class Firm {
 	}
 
 	public double getReturn() {
-		return getPerPeriodReturn() * supplyManager.periods;
+		return getPerPeriodReturn() * SupplyManager.periods;
 	}
 
 	public double getFirstUnitCost() {

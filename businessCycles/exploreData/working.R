@@ -5,95 +5,194 @@ source('C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R')
 path = "C:/Users/javie/git/businessCycles/businessCycles/output"
 setwd(path)
 
-fileID = "2019.may..22.16_05_37"
+#fileID = "Base"
+fileID = "2019.may..23.15_49_51"
 
 f = read_csv(paste0("Firms.", fileID, ".csv"))
 p = read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
-#s = read_csv(paste0("Supply.", fileID, ".csv"))
 
-relevantVars = f %>% names() %>% setdiff(c("run", "tick", "FirmNumID", "random_seed"))
 
 relevantParams = getRelevantParams(p)
 
-fscQ = f %>% 
-  addScenarios(p, relevantParams) %>%
-  addQuantiles(3) %>%
-  mutate(optMUDivMU = OptimalMarkUp / MarkUp,
-         marg = MarkUp - 1)
+#Add calculated variables
+f = f %>% 
+  
+  # Add year of Death
+  group_by(run, FirmNumID) %>%
+  summarise(Death = max(tick)) %>%
+  full_join(f, by = c("run", "FirmNumID")) %>%
+  
+  # Add Margin and optimal Mark Up divided by Mark up
+  mutate(OptMUDivMU = OptimalMarkUp / MarkUp,
+         FirmMargin = MarkUp - 1)
 
-relevantVars = c(relevantVars, "optMUDivMU", "marg")
+idxVars = c("run", "random_seed", "tick", "FirmNumID")
+
+relevantVars = f %>%
+  names() %>% 
+  setdiff(idxVars)
+
+# Add Quantiles and Scenarios
+fScQ = f %>%
+  addQuantiles(3) %>%
+  addScenarios(p, relevantParams)
+
+quantileVars = c("OLQ", "QQ", "OLQQ")
+
+filteredFScQ = fScQ %>%
+  
+  filter(OLQ != 2,
+         recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
+         exitOnRecession == TRUE
+  ) 
+
 
 # Drawing
-varsToDraw = c("Quantity", "MarketShare", "MedCost","marg" )
+varsToDraw = c("Quantity", "MarketShare", "MedCost", "FirmMargin")
 #varsToDraw = c("OpLevMean","OpLevStdDev", "OperatingLeverage", "MaxFunding", "Invest", "FlexibilityCost")
 #varsToDraw = c("OperatingLeverage", "MaxFunding", "Invest")
 #varsToDraw = c("Invest", "OptimalMarkUp", "MarkUp", "optMUDivMU")
 
-#calcVarsToDraw = c("N", "NToMaxN")
-calcVarsToDraw = c("N")
 
 # VarsToDraw
-fscQ %>%
+filteredFScQ %>%
   
-  filter(OLQ != 2,
-         recessionMagnitude == 0.1 | recessionMagnitude == 0.0
-         ) %>%
+  select_at(vars(idxVars, relevantParams, "OLQ", varsToDraw)) %>%
   
-  addDataByQuantiles("OLQ", varsToDraw, relevantParams) %>%
-  meanByQuantiles("OLQ", c(varsToDraw, calcVarsToDraw), relevantParams) %>%
+  meanByQuantiles("OLQ", varsToDraw, relevantParams) %>%
 
-  drawVars(OLQ)
+  drawVars(relevantParams, OLQ) %>%
+  htmlwidgets::saveWidget("Vars.html")
 
 
 # Diference variables
 varsToDraw.d = sapply(varsToDraw, function(x) paste0(x, ".d"))
-calcVarsToDraw.d = sapply(calcVarsToDraw, function(x) paste0(x, ".d"))
 
 # Table of differences respect to base scenario, grouped by OLQ
-fQD = fscQ %>% 
-  # Choose scenarios to draw
-  filter(OLQ != 2, 
-         recessionMagnitude == 0.1 | recessionMagnitude == 0.0
-         ) %>%
-  
-  # Drop variables not to be drawn
-  select_at(vars(setdiff(names(.), setdiff(relevantVars, varsToDraw)))) %>%
+filteredD = filteredFScQ %>% 
+
+  # Keep variables to be drawn
+  select_at(vars(idxVars, relevantParams, "OLQ", varsToDraw)) %>%
   
   # Add percentage variation per firm respect to base scenario
-  addDiff(varsToDraw, c("run", "OLQ", "QQ","OLQQ"), "recessionMagnitude", 0, percent = TRUE) %>%
+  addDiff(varsToDraw, c("run", "OLQ"), "recessionMagnitude", 0, percent = TRUE) %>%
   set_names(~sub("\\.x","",.)) %>%
   
   # Add Stats by Quantile
-  addDataByQuantiles("OLQ", varsToDraw.d, relevantParams) %>%
-  meanByQuantiles("OLQ", c(varsToDraw.d, calcVarsToDraw), relevantParams) %>%
+  meanByQuantiles("OLQ", varsToDraw.d, relevantParams) %>%
   
-  
-  # Add percentage variation of number of firm per quantile respect to base scenario
-  addDiff(calcVarsToDraw, varsToDraw.d, "recessionMagnitude", 0, percent = TRUE) %>%
-  set_names(~sub("\\.x","",.)) %>%
-
   # Eliminate base scenario no difference against itself
-  filter(recessionMagnitude != 0) %>%
-  
-  # Keep vars to draw
-  select_at(vars(relevantParams, "tick", "OLQ", varsToDraw.d, calcVarsToDraw.d))
+  filter(recessionMagnitude != 0)
 
-
-
-fQD %>% drawVars(OLQ)
+  filteredD %>%
+    drawVars(relevantParams, OLQ) %>%
+    htmlwidgets::saveWidget("Vars_D.html")
 
 
 # Difference of Difference
 varsToDraw.dd = sapply(varsToDraw.d, function(x) paste0(x, ".d"))
-calcVarsToDraw.dd = sapply(calcVarsToDraw.d, function(x) paste0(x, ".d"))
 
-fQD %>%
-
-  addDiff(c(varsToDraw.d, calcVarsToDraw.d), c(""), "OLQ", 3, percent = FALSE) %>%
-  filter(OLQ.x != OLQ.y) %>%
-  select_at(vars(relevantParams, "tick", c(varsToDraw.dd, calcVarsToDraw.dd))) %>%
+filteredD %>%
   
-  drawVars()
+  addDiff(varsToDraw.d, "", "OLQ", 3, percent = FALSE) %>%
+  
+  #Eliminate difference with itself
+  filter(OLQ.x != OLQ.y) %>%
+  
+  select_at(vars(relevantParams, "tick", varsToDraw.dd)) %>%
+  
+  drawVars(relevantParams) %>%
+  htmlwidgets::saveWidget("Vars_DD.html")
+
+
+### Calculated Vars By Quantile
+
+calcVarsByQuantileToDraw = c("N", "MaxN", "NToMaxN", "NDeath", "NBorn")
+#calcVarsByQuantileToDraw = c("N", "NDeath", "NBorn")
+
+dataByQuantile = filteredFScQ %>%
+  
+  addDataByQuantiles("OLQ", relevantParams) %>%
+  
+  meanByQuantiles("OLQ", calcVarsByQuantileToDraw, relevantParams)
+  
+
+dataByQuantile %>%
+  drawVars(relevantParams, OLQ) %>%
+  htmlwidgets::saveWidget("DataByQ.html")
+
+# Diference variables
+calcVarsByQuantileToDraw.d = sapply(calcVarsByQuantileToDraw, function(x) paste0(x, ".d"))
+
+# Table of differences respect to base scenario, grouped by OLQ
+dataByQuantileD = dataByQuantile %>% 
+
+  # Add percentage variation respect to base scenario
+  addDiff(calcVarsByQuantileToDraw, c("run", "OLQ"), "recessionMagnitude", 0, percent = TRUE) %>%
+  set_names(~sub("\\.x","",.)) %>%
+  
+  # Add Stats by Quantile
+  meanByQuantiles("OLQ", calcVarsByQuantileToDraw.d, relevantParams) %>%
+  
+  # Eliminate base scenario no difference against itself
+  filter(recessionMagnitude != 0)
+  
+dataByQuantileD %>%
+  
+  drawVars(relevantParams, OLQ) %>%
+  htmlwidgets::saveWidget("dataByQ_D.html")
+
+# Difference of Difference
+calcVarsByQuantileToDraw.dd = sapply(calcVarsByQuantileToDraw.d, function(x) paste0(x, ".d"))
+
+dataByQuantileD %>%
+  
+  addDiff(calcVarsByQuantileToDraw.d, "", "OLQ", 3, percent = FALSE) %>%
+  
+  #Eliminate Difference with itself
+  filter(OLQ.x != OLQ.y) %>%
+  
+  select_at(vars(relevantParams, "tick", calcVarsByQuantileToDraw.dd)) %>%
+  
+  drawVars(relevantParams) %>%
+  htmlwidgets::saveWidget("dataByQ_DD.html")
+
+
+### Aggregated market data
+s = read_csv(paste0("Supply.", fileID, ".csv"))
+ssc = s %>% 
+  addScenarios(p, relevantParams)
+
+aggVarsToDraw = c("Dead", "BornFirms")
+aggVarsToDraw.d = sapply(aggVarsToDraw, function(x) paste0(x, ".d"))
+
+sscG = ssc %>% 
+  select_at(vars(relevantParams, aggVarsToDraw, c("run","tick","random_seed"))) %>%
+  
+  # Add percentage variation per firm respect to base scenario
+  addDiff(aggVarsToDraw, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
+  set_names(~sub("\\.x","",.)) %>%
+  
+  
+  group_by_at(vars(relevantParams, "tick")) %>%
+  summarise_at( vars(aggVarsToDraw, aggVarsToDraw.d), mean, na.rm = TRUE) %>%
+  ungroup()  
+
+#Vars
+sscG %>%
+  filter( 
+    recessionMagnitude == 0.1 | recessionMagnitude == 0.0
+  ) %>%
+  select(relevantParams, tick, aggVarsToDraw) %>%
+  drawVars(relevantParams)
+
+#Differences
+sscG %>%
+  filter( 
+    recessionMagnitude == 0.1
+  ) %>%
+  select(relevantParams, tick, aggVarsToDraw.d) %>%
+  drawVars(relevantParams)
 
 ### Individual Firms
 

@@ -1,132 +1,199 @@
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:00:57,925 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558368053078\javie_localhost17905240975238173155.zip
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:01:12,094 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
-INFO  [Thread-1] 2019-05-20 13:01:25,753 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-1] 2019-05-20 13:01:25,753 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558368053078/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-1] 2019-05-20 13:01:25,754 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-1] 2019-05-20 13:01:25,754 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-1] 2019-05-20 13:01:25,754 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [Thread-1] 2019-05-20 13:01:25,918 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-1] 2019-05-20 13:01:25,918 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558368053078/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-1] 2019-05-20 13:01:25,918 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-1] 2019-05-20 13:01:25,918 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-1] 2019-05-20 13:01:25,919 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [pool-3-thread-1] 2019-05-20 13:02:12,096 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558368053078 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-20 13:03:12,097 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558368053078 for DONE:  yes
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:03:12,098 repast.simphony.batch.ssh.SessionsDriver - Run Time: 2,2362
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:03:12,121 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\javie\AppData\Local\Temp\simphony_model_1558368053078
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:03:12,123 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/javie/git/businessCycles/businessCycles/output
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:03:33,515 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,3569
-INFO  [SwingWorker-pool-1-thread-2] 2019-05-20 13:03:33,515 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 2,6750
-INFO  [AWT-EventQueue-0] 2019-05-20 13:36:18,900 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\javie\git\businessCycles\businessCycles\output\config.props
-INFO  [AWT-EventQueue-0] 2019-05-20 13:36:19,081 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
+ERROR [AWT-EventQueue-0] 2019-05-23 15:38:57,498 repast.simphony.ui.RSApplication - Error while initializing simulation
+repast.simphony.parameter.IllegalParameterException: Parameter 'exitOnRecession' not found in the schema.
+	at repast.simphony.parameter.DefaultParameters.getValue(DefaultParameters.java:213)
+	at repast.simphony.essentials.RepastEssentials.GetParameter(RepastEssentials.java:1159)
+	at businessCycles.RecessionHandler.resetStaticVars(RecessionHandler.java:22)
+	at businessCycles.RecessionHandler.<init>(RecessionHandler.java:17)
+	at businessCycles.SupplyManager.<init>(SupplyManager.java:58)
+	at businessCycles.ModelLoader.build(ModelLoader.java:36)
+	at repast.simphony.dataLoader.engine.ClassNameContextBuilder.build(ClassNameContextBuilder.java:41)
+	at repast.simphony.dataLoader.engine.DataLoaderControllerAction.runInitialize(DataLoaderControllerAction.java:48)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:214)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:1)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:292)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:288)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:212)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:383)
+	at repast.simphony.ui.RSApplication.initSim(RSApplication.java:157)
+	at repast.simphony.ui.RSApplication.start(RSApplication.java:189)
+	at repast.simphony.ui.action.StartRun.actionPerformed(StartRun.java:17)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:297)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6632)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6397)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5008)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4918)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4547)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4488)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2772)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+ERROR [AWT-EventQueue-0] 2019-05-23 15:40:03,359 repast.simphony.ui.RSApplication - Error while initializing simulation
+repast.simphony.parameter.IllegalParameterException: Parameter 'exitOnRecession' not found in the schema.
+	at repast.simphony.parameter.DefaultParameters.getValue(DefaultParameters.java:213)
+	at repast.simphony.essentials.RepastEssentials.GetParameter(RepastEssentials.java:1159)
+	at businessCycles.RecessionHandler.resetStaticVars(RecessionHandler.java:22)
+	at businessCycles.RecessionHandler.<init>(RecessionHandler.java:17)
+	at businessCycles.SupplyManager.<init>(SupplyManager.java:58)
+	at businessCycles.ModelLoader.build(ModelLoader.java:36)
+	at repast.simphony.dataLoader.engine.ClassNameContextBuilder.build(ClassNameContextBuilder.java:41)
+	at repast.simphony.dataLoader.engine.DataLoaderControllerAction.runInitialize(DataLoaderControllerAction.java:48)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:214)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:1)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:292)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:288)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:212)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:383)
+	at repast.simphony.ui.RSApplication.initSim(RSApplication.java:157)
+	at repast.simphony.ui.RSApplication.start(RSApplication.java:189)
+	at repast.simphony.ui.action.StartRun.actionPerformed(StartRun.java:17)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:297)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6632)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6397)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5008)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4918)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4547)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4488)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2772)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+ERROR [AWT-EventQueue-0] 2019-05-23 15:40:20,804 repast.simphony.ui.RSApplication - Error while initializing simulation
+repast.simphony.parameter.IllegalParameterException: Parameter 'exitOnRecession' not found in the schema.
+	at repast.simphony.parameter.DefaultParameters.getValue(DefaultParameters.java:213)
+	at repast.simphony.essentials.RepastEssentials.GetParameter(RepastEssentials.java:1159)
+	at businessCycles.RecessionHandler.resetStaticVars(RecessionHandler.java:22)
+	at businessCycles.RecessionHandler.<init>(RecessionHandler.java:17)
+	at businessCycles.SupplyManager.<init>(SupplyManager.java:58)
+	at businessCycles.ModelLoader.build(ModelLoader.java:36)
+	at repast.simphony.dataLoader.engine.ClassNameContextBuilder.build(ClassNameContextBuilder.java:41)
+	at repast.simphony.dataLoader.engine.DataLoaderControllerAction.runInitialize(DataLoaderControllerAction.java:48)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:214)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:1)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:292)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:288)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:212)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:383)
+	at repast.simphony.ui.RSApplication.initSim(RSApplication.java:157)
+	at repast.simphony.ui.action.InitRun.actionPerformed(InitRun.java:17)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:297)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6632)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6397)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5008)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4918)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4547)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4488)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2772)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4840)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+INFO  [AWT-EventQueue-0] 2019-05-23 15:45:34,014 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\javie\git\businessCycles\businessCycles\output\config.props
+INFO  [AWT-EventQueue-0] 2019-05-23 15:45:34,201 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
 	C:\Users\javie\git\businessCycles\businessCycles\batch\batch_params.xml to
 	C:\Users\javie\AppData\Local\Temp\unrolledParamFile.txt
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:36:55,190 repast.simphony.batch.ssh.LocalSession - 
-	Copying locally C:\Users\javie\AppData\Local\Temp\javie_localhost4122833113360763777.zip to 
-C:\Users\javie\AppData\Local\Temp\simphony_model_1558370210508 ...
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:36:55,228 repast.simphony.batch.ssh.LocalSession - Copying Finished.
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:36:55,228 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0787
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:36:55,228 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558370210508\javie_localhost4122833113360763777.zip
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:37:07,290 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
-INFO  [Thread-0] 2019-05-20 13:37:17,998 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-0] 2019-05-20 13:37:17,998 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558370210508/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-0] 2019-05-20 13:37:17,998 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-0] 2019-05-20 13:37:17,998 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-0] 2019-05-20 13:37:17,998 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [Thread-0] 2019-05-20 13:37:18,088 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-0] 2019-05-20 13:37:18,088 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558370210508/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-0] 2019-05-20 13:37:18,089 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-0] 2019-05-20 13:37:18,089 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-0] 2019-05-20 13:37:18,089 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [pool-2-thread-1] 2019-05-20 13:38:07,296 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558370210508 for DONE:  yes
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:38:07,298 repast.simphony.batch.ssh.SessionsDriver - Run Time: 1,2012
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:38:07,311 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\javie\AppData\Local\Temp\simphony_model_1558370210508
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:38:07,319 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/javie/git/businessCycles/businessCycles/output
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:38:24,200 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,2817
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-20 13:38:24,200 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 1,5624
-INFO  [AWT-EventQueue-0] 2019-05-22 11:38:05,672 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\javie\git\businessCycles\businessCycles\output\config.props
-INFO  [AWT-EventQueue-0] 2019-05-22 11:38:05,835 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
-	C:\Users\javie\git\businessCycles\businessCycles\batch\batch_params.xml to
-	C:\Users\javie\AppData\Local\Temp\unrolledParamFile.txt
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:39:19,839 repast.simphony.batch.ssh.LocalSession - 
-	Copying locally C:\Users\javie\AppData\Local\Temp\javie_localhost18336996306337072925.zip to 
-C:\Users\javie\AppData\Local\Temp\simphony_model_1558535954898 ...
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:39:19,877 repast.simphony.batch.ssh.LocalSession - Copying Finished.
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:39:19,878 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0830
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:39:19,879 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558535954898\javie_localhost18336996306337072925.zip
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:39:34,397 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
-INFO  [Thread-0] 2019-05-22 11:39:47,857 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-0] 2019-05-22 11:39:47,857 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558535954898/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-0] 2019-05-22 11:39:47,857 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-0] 2019-05-22 11:39:47,857 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-0] 2019-05-22 11:39:47,858 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [Thread-0] 2019-05-22 11:39:47,893 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-0] 2019-05-22 11:39:47,893 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558535954898/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-0] 2019-05-22 11:39:47,893 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-0] 2019-05-22 11:39:47,893 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-0] 2019-05-22 11:39:47,893 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [pool-2-thread-1] 2019-05-22 11:40:34,403 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558535954898 for DONE:  no
-INFO  [pool-2-thread-1] 2019-05-22 11:41:34,403 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558535954898 for DONE:  yes
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:41:34,404 repast.simphony.batch.ssh.SessionsDriver - Run Time: 2,2421
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:41:34,416 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\javie\AppData\Local\Temp\simphony_model_1558535954898
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:41:34,424 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/javie/git/businessCycles/businessCycles/output
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:41:49,530 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,2521
-INFO  [SwingWorker-pool-1-thread-1] 2019-05-22 11:41:49,530 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 2,5784
-INFO  [AWT-EventQueue-0] 2019-05-22 12:25:01,492 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\javie\git\businessCycles\businessCycles\output\config.props
-INFO  [AWT-EventQueue-0] 2019-05-22 12:25:01,672 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
-	C:\Users\javie\git\businessCycles\businessCycles\batch\batch_params.xml to
-	C:\Users\javie\AppData\Local\Temp\unrolledParamFile.txt
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 12:25:41,647 repast.simphony.batch.ssh.LocalSession - 
-	Copying locally C:\Users\javie\AppData\Local\Temp\javie_localhost12328118741152024844.zip to 
-C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 ...
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 12:25:41,685 repast.simphony.batch.ssh.LocalSession - Copying Finished.
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 12:25:41,686 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0849
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 12:25:41,686 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589\javie_localhost12328118741152024844.zip
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 12:25:55,255 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
-INFO  [Thread-1] 2019-05-22 12:26:08,290 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-1] 2019-05-22 12:26:08,291 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558538736589/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-1] 2019-05-22 12:26:08,291 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-1] 2019-05-22 12:26:08,291 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-1] 2019-05-22 12:26:08,291 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [Thread-1] 2019-05-22 12:26:08,338 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-1] 2019-05-22 12:26:08,338 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558538736589/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-1] 2019-05-22 12:26:08,338 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-1] 2019-05-22 12:26:08,338 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-1] 2019-05-22 12:26:08,338 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [pool-3-thread-1] 2019-05-22 12:26:55,261 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:27:55,261 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:28:55,262 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:29:55,262 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:30:55,263 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:31:55,264 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:32:55,264 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:33:55,265 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:34:55,275 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [pool-3-thread-1] 2019-05-22 12:35:55,275 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558538736589 for DONE:  no
-INFO  [AWT-EventQueue-0] 2019-05-22 16:03:22,415 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\javie\git\businessCycles\businessCycles\output\config.props
-INFO  [AWT-EventQueue-0] 2019-05-22 16:03:22,569 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
-	C:\Users\javie\git\businessCycles\businessCycles\batch\batch_params.xml to
-	C:\Users\javie\AppData\Local\Temp\unrolledParamFile.txt
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:04:25,522 repast.simphony.batch.ssh.LocalSession - 
-	Copying locally C:\Users\javie\AppData\Local\Temp\javie_localhost8449676803236558892.zip to 
-C:\Users\javie\AppData\Local\Temp\simphony_model_1558551860762 ...
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:04:25,560 repast.simphony.batch.ssh.LocalSession - Copying Finished.
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:04:25,562 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0800
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:04:25,562 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558551860762\javie_localhost8449676803236558892.zip
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:04:37,260 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
-INFO  [Thread-3] 2019-05-22 16:04:47,289 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-3] 2019-05-22 16:04:47,290 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558551860762/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-3] 2019-05-22 16:04:47,290 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-3] 2019-05-22 16:04:47,290 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-3] 2019-05-22 16:04:47,290 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [Thread-3] 2019-05-22 16:04:48,100 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
-INFO  [Thread-3] 2019-05-22 16:04:48,100 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558551860762/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
-INFO  [Thread-3] 2019-05-22 16:04:48,100 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
-INFO  [Thread-3] 2019-05-22 16:04:48,100 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-INFO  [Thread-3] 2019-05-22 16:04:48,100 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
-INFO  [pool-3-thread-1] 2019-05-22 16:05:37,264 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558551860762 for DONE:  yes
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:05:37,265 repast.simphony.batch.ssh.SessionsDriver - Run Time: 1,1951
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:05:37,283 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\javie\AppData\Local\Temp\simphony_model_1558551860762
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:05:37,291 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/javie/git/businessCycles/businessCycles/output
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:05:52,311 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,2508
-INFO  [SwingWorker-pool-2-thread-1] 2019-05-22 16:05:52,311 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 1,5267
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:46:40,187 repast.simphony.batch.ssh.LocalSession - 
+	Copying locally C:\Users\javie\AppData\Local\Temp\javie_localhost1144742158072888770.zip to 
+C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677 ...
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:46:40,228 repast.simphony.batch.ssh.LocalSession - Copying Finished.
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:46:40,229 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0,0759
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:46:40,229 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677\javie_localhost1144742158072888770.zip
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:46:51,585 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
+INFO  [Thread-6] 2019-05-23 15:47:02,157 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
+INFO  [Thread-6] 2019-05-23 15:47:02,157 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558637195677/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
+INFO  [Thread-6] 2019-05-23 15:47:02,157 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
+INFO  [Thread-6] 2019-05-23 15:47:02,158 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+INFO  [Thread-6] 2019-05-23 15:47:02,158 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
+INFO  [Thread-6] 2019-05-23 15:47:02,268 repast.simphony.batch.ssh.LocalSession - WARNING: An illegal reflective access operation has occurred
+INFO  [Thread-6] 2019-05-23 15:47:02,268 repast.simphony.batch.ssh.LocalSession - WARNING: Illegal reflective access by com.thoughtworks.xstream.core.util.Fields (file:/C:/Users/javie/AppData/Local/Temp/simphony_model_1558637195677/lib/xstream-1.4.7.jar) to field java.util.TreeMap.comparator
+INFO  [Thread-6] 2019-05-23 15:47:02,268 repast.simphony.batch.ssh.LocalSession - WARNING: Please consider reporting this to the maintainers of com.thoughtworks.xstream.core.util.Fields
+INFO  [Thread-6] 2019-05-23 15:47:02,268 repast.simphony.batch.ssh.LocalSession - WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+INFO  [Thread-6] 2019-05-23 15:47:02,268 repast.simphony.batch.ssh.LocalSession - WARNING: All illegal access operations will be denied in a future release
+INFO  [pool-3-thread-1] 2019-05-23 15:47:51,591 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677 for DONE:  no
+INFO  [pool-3-thread-1] 2019-05-23 15:48:51,591 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677 for DONE:  no
+INFO  [pool-3-thread-1] 2019-05-23 15:49:51,592 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677 for DONE:  yes
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:49:51,593 repast.simphony.batch.ssh.SessionsDriver - Run Time: 3,1894
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:49:51,650 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\javie\AppData\Local\Temp\simphony_model_1558637195677
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:49:51,674 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/javie/git/businessCycles/businessCycles/output
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:50:32,574 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0,6830
+INFO  [SwingWorker-pool-2-thread-1] 2019-05-23 15:50:32,575 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 3,9499

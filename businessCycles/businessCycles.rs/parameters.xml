@@ -48,6 +48,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+				<parameter name="exitOnRecession" displayName="Exit on Recession?" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
+		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
 						defaultValue="2.0" 
 						isReadOnly="false" 

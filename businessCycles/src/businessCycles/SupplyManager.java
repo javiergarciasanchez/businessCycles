@@ -17,7 +17,6 @@ import java.util.List;
 
 import cern.jet.random.*;
 import repast.simphony.context.Context;
-import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.*;
 import repast.simphony.parameter.*;
 import repast.simphony.random.*;
@@ -27,7 +26,7 @@ import static repast.simphony.essentials.RepastEssentials.*;
 
 public class SupplyManager {
 
-	private static double recessionMagnitude = 0.0;
+	private RecessionHandler recessionHandler;
 
 	public double totalQuantity = 0;
 	public double price = 0;
@@ -43,7 +42,7 @@ public class SupplyManager {
 	public Normal entrantsNormal = null;
 	public Normal firstUnitCostNormal = null;
 
-	public int periods;
+	public static int periods;
 
 	private Context<Object> context;
 
@@ -56,7 +55,8 @@ public class SupplyManager {
 
 		periods = (Integer) GetParameter("periods");
 
-		scheduleRecessions();
+		recessionHandler = new RecessionHandler();
+		recessionHandler.scheduleRecessions();
 
 		/* Create distributions for initial variables of firms */
 		double opLevMean = (Double) GetParameter("operatingLeverageMean");
@@ -103,55 +103,6 @@ public class SupplyManager {
 
 	}
 
-	private void scheduleRecessions() {
-		double[] start, dur, recesMag;
-
-		// Read start of recessions
-		String[] tmp = ((String) GetParameter("recessionStart")).split(":");
-		start = new double[tmp.length];
-		for (int i = 0; i < tmp.length; i++) {
-			start[i] = Double.valueOf(tmp[i]);
-		}
-
-		// Read Duration of recessions
-		tmp = ((String) GetParameter("recessionDuration")).split(":");
-		dur = new double[tmp.length];
-		for (int i = 0; i < tmp.length; i++) {
-			dur[i] = Double.valueOf(tmp[i]);
-		}
-
-		// Read magnitude of recessions
-		tmp = ((String) GetParameter("recessionMagnitude")).split(":");
-		recesMag = new double[tmp.length];
-		for (int i = 0; i < tmp.length; i++) {
-			recesMag[i] = Double.valueOf(tmp[i]);
-		}
-
-		// Schedule recessions
-		for (int i = 0; i < tmp.length; i++) {
-			ISchedule sch = RunEnvironment.getInstance().getCurrentSchedule();
-
-			// Set start
-			ScheduleParameters params = ScheduleParameters.createOneTime(
-					start[i] * periods, ScheduleParameters.FIRST_PRIORITY);
-			sch.schedule(params, this, "setRecesMagnitude", recesMag[i]);
-
-			// Set end
-			params = ScheduleParameters.createOneTime((start[i] + dur[i])
-					* periods, ScheduleParameters.FIRST_PRIORITY);
-			sch.schedule(params, this, "setRecesMagnitude", 0.0);
-
-		}
-
-	}
-
-	public static void setRecesMagnitude(double mag) {
-		recessionMagnitude = mag;
-	}
-
-	public static double getRecesMagnitude() {
-		return recessionMagnitude;
-	}
 
 	@ScheduledMethod(start = 1d, interval = 1)
 	public void step() {
@@ -163,6 +114,8 @@ public class SupplyManager {
 			entry(potentialEntrantsPerPeriod);
 
 		processOffers();
+		
+		killFirms();
 
 		// Planning
 		IndexedIterable<Object> firms = context.getObjects(Firm.class);
@@ -193,10 +146,10 @@ public class SupplyManager {
 
 		IndexedIterable<Object> firms = context.getObjects(Firm.class);
 
-		totalFirms = firms.size();
+		totalFBeforeExit = firms.size();
 
-		if (totalFirms == 0.0) {
-			totalQuantity = 0.0;
+		if (totalFBeforeExit == 0.0) {
+			totalQBeforeExit = 0.0;
 		} else {
 			double tmpQ = 0.0;
 			for (Object f : firms) {
@@ -205,43 +158,60 @@ public class SupplyManager {
 
 			}
 
-			totalQuantity = tmpQ;
+			totalQBeforeExit = tmpQ;
 		}
 
-		price = Demand.price(totalQuantity);
+		price = Demand.price(totalQBeforeExit);
 
-		List<Firm> toKill = new ArrayList<Firm>(firms.size());
 
-		for (Object f : context.getObjects(Firm.class)) {
+	}
+	
+	private void killFirms() {
 
-			// Process Demand Response
-			if (!((Firm) f).processDemandResponse()) {
-				toKill.add((Firm) f);
-			}
-
-		}
-
-		dead = toKill.size();
-		for (Firm f : toKill) {
-			RemoveAgentFromModel(f);
-		}
-
-		firms = context.getObjects(Firm.class);
-		totalFBeforeExit = totalFirms;
-		totalFirms = firms.size();
-		totalQBeforeExit = totalQuantity;
-
-		if (totalFirms == 0.0) {
-			totalQuantity = 0.0;
+		if (!RecessionHandler.exitOnRecession() && RecessionHandler.inRecession()) {
+			
+			totalFirms = totalFBeforeExit;
+			totalQuantity = totalQBeforeExit;
+			return;
+			
 		} else {
-			double tmpQ = 0.0;
-			for (Object f : firms) {
-				tmpQ += ((Firm) f).getQuantity();
+			
+			IndexedIterable<Object> firms = context.getObjects(Firm.class);
+
+			List<Firm> toKill = new ArrayList<Firm>(firms.size());
+
+			for (Object f : context.getObjects(Firm.class)) {
+
+				// Process Demand Response
+				if (!((Firm) f).processDemandResponse()) {
+					toKill.add((Firm) f);
+				}
+
 			}
-			totalQuantity = tmpQ;
+
+			dead = toKill.size();
+			for (Firm f : toKill) {
+				RemoveAgentFromModel(f);
+			}
+
+			firms = context.getObjects(Firm.class);
+	
+			totalFirms = firms.size();			
+
+			if (totalFirms == 0.0) {
+				totalQuantity = 0.0;
+			} else {
+				double tmpQ = 0.0;
+				for (Object f : firms) {
+					tmpQ += ((Firm) f).getQuantity();
+				}
+				totalQuantity = tmpQ;
+			}
+
 		}
 
 	}
+
 
 	public String toString() {
 
