@@ -13,9 +13,15 @@
 									
 		/>
 				<parameter name="firstUnitCostStdDev" displayName="First Unit Cost Std Dev" type="double" 
-						defaultValue="0.2" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="exitOnRecession" displayName="Exit on Recession?" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 				<parameter name="learningRateStdDev" displayName="Learning Rate Std Dev" type="double" 
@@ -46,12 +52,6 @@
 						defaultValue="0.5" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-				<parameter name="exitOnRecession" displayName="Exit on Recession?" type="boolean" 
-						defaultValue="true" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
@@ -85,7 +85,7 @@
 									
 		/>
 				<parameter name="recessionMagnitude" displayName="Recessions Magnitude (sep by :  - colon)" type="java.lang.String" 
-						defaultValue="0.2" 
+						defaultValue="0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
@@ -97,7 +97,7 @@
 									
 		/>
 				<parameter name="entrantsStdDev" displayName="Entrants Std Dev" type="double" 
-						defaultValue="0.1" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -145,7 +145,7 @@
 									
 		/>
 				<parameter name="iniKStdDev" displayName="Ini K Std Dev" type="double" 
-						defaultValue="0.1" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

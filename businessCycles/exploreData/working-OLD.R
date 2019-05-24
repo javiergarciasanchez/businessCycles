@@ -83,6 +83,58 @@ addDiffOfDiffByOLQ = function(df, relevantParams, x, y){
   fDQD %>% set_names(~sub("\\.y",paste0(".",y),.))
 }
 
+#Vars
+sscG %>%
+  filter( 
+    recessionMagnitude == 0.1 | recessionMagnitude == 0.0
+  ) %>%
+  select(relevantParams, tick, aggVarsToDraw) %>%
+  drawVars(relevantParams)
+
+#Differences
+sscG %>%
+  filter( 
+    recessionMagnitude == 0.1
+  ) %>%
+  select(relevantParams, tick, aggVarsToDraw.d) %>%
+  drawVars(relevantParams)
+
+### Individual Firms
+
+fscQ %>%
+  filter(tick == 100, OLQ == 1, recessionMagnitude == 0.1) %>%
+  select(random_seed, FirmNumID) %>% unique() #%>% .$FirmNumID
+
+#FirmNumID %in% firmSel$FirmNumID,
+
+fscQ %>%
+  
+  filter( FirmNumID == 27,
+          random_seed == 1,
+          recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
+          recessionStart == 20,
+          tick > 15,
+          tick < 50) %>%
+  
+  select(random_seed, tick, FirmNumID, varsToDraw, relevantParams)  %>%
+  
+  addDiff(varsToDraw, c(""), "recessionMagnitude", 0, percent = TRUE) %>%
+  set_names(~sub("\\.x","",.)) %>%
+  
+  
+  addScenariosNames() %>%
+  select(-recessionMagnitude, -recessionStart, -recessionDuration) %>%
+  select_at(vars(varsToDraw, "random_seed", "sc", "tick", "FirmNumID")) %>%
+  
+  gather(varToDraw, value, -c(sc, tick, FirmNumID, random_seed)) %>%
+  
+  ggplot(aes(tick, value, color = as.factor(FirmNumID))) +
+  geom_line() +
+  facet_grid(varToDraw ~ sc, scales = "free_y")
+
+ggplotly()
+
+
 plotScenario = function(df, scenario, varToD) {
   df %>%
     filter(sc == scenario,

@@ -6,7 +6,8 @@ path = "C:/Users/javie/git/businessCycles/businessCycles/output"
 setwd(path)
 
 #fileID = "Base"
-fileID = "2019.may..23.15_49_51"
+#fileID = "2019.may..23.15_49_51"
+fileID = "2019.may..23.18_04_43"
 
 f = read_csv(paste0("Firms.", fileID, ".csv"))
 p = read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
@@ -42,7 +43,7 @@ quantileVars = c("OLQ", "QQ", "OLQQ")
 filteredFScQ = fScQ %>%
   
   filter(OLQ != 2,
-         recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
+         recessionMagnitude == 0.05 | recessionMagnitude == 0.0,
          exitOnRecession == TRUE
   ) 
 
@@ -140,7 +141,7 @@ dataByQuantileD = dataByQuantile %>%
 dataByQuantileD %>%
   
   drawVars(relevantParams, OLQ) %>%
-  htmlwidgets::saveWidget("dataByQ_D.html")
+  htmlwidgets::saveWidget("DataByQ_D.html")
 
 # Difference of Difference
 calcVarsByQuantileToDraw.dd = sapply(calcVarsByQuantileToDraw.d, function(x) paste0(x, ".d"))
@@ -155,7 +156,7 @@ dataByQuantileD %>%
   select_at(vars(relevantParams, "tick", calcVarsByQuantileToDraw.dd)) %>%
   
   drawVars(relevantParams) %>%
-  htmlwidgets::saveWidget("dataByQ_DD.html")
+  htmlwidgets::saveWidget("DataByQ_DD.html")
 
 
 ### Aggregated market data
@@ -178,53 +179,3 @@ sscG = ssc %>%
   summarise_at( vars(aggVarsToDraw, aggVarsToDraw.d), mean, na.rm = TRUE) %>%
   ungroup()  
 
-#Vars
-sscG %>%
-  filter( 
-    recessionMagnitude == 0.1 | recessionMagnitude == 0.0
-  ) %>%
-  select(relevantParams, tick, aggVarsToDraw) %>%
-  drawVars(relevantParams)
-
-#Differences
-sscG %>%
-  filter( 
-    recessionMagnitude == 0.1
-  ) %>%
-  select(relevantParams, tick, aggVarsToDraw.d) %>%
-  drawVars(relevantParams)
-
-### Individual Firms
-
-fscQ %>%
-  filter(tick == 100, OLQ == 1, recessionMagnitude == 0.1) %>%
-  select(random_seed, FirmNumID) %>% unique() #%>% .$FirmNumID
-
-#FirmNumID %in% firmSel$FirmNumID,
-
-fscQ %>%
-  
-  filter( FirmNumID == 27,
-          random_seed == 1,
-          recessionMagnitude == 0.1 | recessionMagnitude == 0.0,
-          recessionStart == 20,
-          tick > 15,
-          tick < 50) %>%
-  
-  select(random_seed, tick, FirmNumID, varsToDraw, relevantParams)  %>%
-  
-  addDiff(varsToDraw, c(""), "recessionMagnitude", 0, percent = TRUE) %>%
-  set_names(~sub("\\.x","",.)) %>%
-  
-  
-  addScenariosNames() %>%
-  select(-recessionMagnitude, -recessionStart, -recessionDuration) %>%
-  select_at(vars(varsToDraw, "random_seed", "sc", "tick", "FirmNumID")) %>%
-  
-  gather(varToDraw, value, -c(sc, tick, FirmNumID, random_seed)) %>%
-  
-  ggplot(aes(tick, value, color = as.factor(FirmNumID))) +
-  geom_line() +
-  facet_grid(varToDraw ~ sc, scales = "free_y")
-
-ggplotly()

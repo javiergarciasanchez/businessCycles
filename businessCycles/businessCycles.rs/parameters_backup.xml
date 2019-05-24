@@ -13,9 +13,15 @@
 									
 		/>
 				<parameter name="firstUnitCostStdDev" displayName="First Unit Cost Std Dev" type="double" 
-						defaultValue="0.2" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="exitOnRecession" displayName="Exit on Recession?" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 				<parameter name="learningRateStdDev" displayName="Learning Rate Std Dev" type="double" 
@@ -48,12 +54,6 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="exitOnSS" displayName="Exit on Sudden Stop?" type="boolean" 
-						defaultValue="true" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
-									
-		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
 						defaultValue="2.0" 
 						isReadOnly="false" 
@@ -73,7 +73,7 @@
 									
 		/>
 				<parameter name="flexibilityCostStdDev" displayName="Cost of flexibility Standard Deviation" type="double" 
-						defaultValue="0.05" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -97,7 +97,7 @@
 									
 		/>
 				<parameter name="entrantsStdDev" displayName="Entrants Std Dev" type="double" 
-						defaultValue="0.1" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -145,7 +145,7 @@
 									
 		/>
 				<parameter name="iniKStdDev" displayName="Ini K Std Dev" type="double" 
-						defaultValue="0.1" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
