@@ -224,6 +224,22 @@
         <methodName>getOptimalMarkUp</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
+    <entry>
+      <string>Expon</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Expon</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getExpon</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>LearningRate</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>LearningRate</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getLearningRate</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
   </methodDataSources>
   <countSources class="linked-hash-map"/>
   <customNADataSources class="linked-hash-map"/>

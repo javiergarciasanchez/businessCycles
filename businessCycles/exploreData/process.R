@@ -80,9 +80,11 @@ addQuantiles = function(df, n) {
 # diffVars: Variables to calculate difference
 # keepVars: columns that should be kept, but are not part of index nor diffVars
 # varDif: variable to separate x and y
-# percent: TRUE or FALSE. Percentage or absolute differenc
+# percent: TRUE or FALSE. Percentage or absolute difference.
+#
+# Percentage variation SHOULD NOT be used, when values could have different sign
 # All columns that are not in diffVars, keepVars o varDif are considered part of index to join
-addDiff = function(df, diffVars, keepVars, varDif, y, percent = TRUE){
+addDiff = function(df, diffVars, keepVars, varDif, y, percent = FALSE){
   
   df.y = filter(df, (!!as.name(varDif))  == y)
   
@@ -102,6 +104,11 @@ addDiff = function(df, diffVars, keepVars, varDif, y, percent = TRUE){
     dfD[varsD]= dfD[vars.x] - dfD[vars.y]
     
     }
+  
+  # Eliminate difference with itself
+  dfD = dfD %>%
+    filter((!!as.name(paste0(varDif, ".x")))  != y) %>%
+    set_names(~sub("\\.x","",.))
   
   return(dfD)
 
@@ -157,7 +164,7 @@ meanByQuantiles = function(df, Q, varsToSum, relevantParams) {
 }
 
 # Draw variables
-drawVars = function(df, relevantParams, v ){
+drawVars = function(df, relevantParams, v , tit){
   
   if (missing(v)){
     
@@ -169,7 +176,8 @@ drawVars = function(df, relevantParams, v ){
       
       ggplot(aes(tick, value, color = "red")) +
       geom_line() +
-      facet_grid(varToDraw ~ sc, scales = "free_y")
+      facet_grid(varToDraw ~ sc, scales = "free_y") +
+      labs(title = tit)
     
     ggplotly()  
     
@@ -185,7 +193,8 @@ drawVars = function(df, relevantParams, v ){
       
       ggplot(aes(tick, value, color = !!v)) +
       geom_line() +
-      facet_grid(varToDraw ~ sc, scales = "free_y")
+      facet_grid(varToDraw ~ sc, scales = "free_y") +
+      labs(title = tit)
     
     ggplotly()  
     

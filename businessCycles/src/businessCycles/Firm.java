@@ -42,6 +42,7 @@ public class Firm {
 	// Local firm variables - stable along firm life
 	private double firstUnitCost = 0.0;
 	private double operatingLeverage = 0.0;
+	private double learningRate = 0.0; 
 	private double expon = 0.0;
 	private double born = 0.0;
 
@@ -59,8 +60,7 @@ public class Firm {
 
 	private static double opLevMean;
 	private static double opLevStdDev;
-	private static double flexCostMean;
-	private static double flexCostStdDev;
+	private static double flexCostScale;
 	private static double deprecPerPeriod;
 	private static double maxExtFundPerPeriod;
 	private static double invParam;
@@ -86,7 +86,7 @@ public class Firm {
 		perPeriodPerformance = minPerformance;
 
 		// 0.5 < learning rate <= 1.0
-		double learningRate = min(1.0, max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
+		learningRate = min(1.0, max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
 
 	}
@@ -109,8 +109,7 @@ public class Firm {
 
 		opLevMean = (Double) GetParameter("operatingLeverageMean");
 		opLevStdDev = (Double) GetParameter("operatingLeverageStdDev") * opLevMean;
-		flexCostMean = (Double) GetParameter("flexibilityCostMean");
-		flexCostStdDev = (Double) GetParameter("flexibilityCostStdDev") * flexCostMean;
+		flexCostScale = (Double) GetParameter("flexibilityCostScale");
 		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
 		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding") / periods;
 		invParam = (Double) GetParameter("investmentParam");
@@ -169,10 +168,7 @@ public class Firm {
 	 */
 	private double operatingLeverageAdjustment() {
 
-		flexibilityCost = flexCostMean + (opLevMean - operatingLeverage) * flexCostStdDev / opLevStdDev;
-
-		// Flexibility cost cannot be lower than 10% of mean
-		flexibilityCost = max(0.1 * flexCostMean, flexibilityCost);
+		flexibilityCost = 1 + flexCostScale * (opLevMean - operatingLeverage) / opLevStdDev;
 
 		return flexibilityCost * (operatingLeverage + (1 - operatingLeverage) * Demand.getCapacityUsed());
 
@@ -336,6 +332,10 @@ public class Firm {
 	public double getOperatingLeverage() {
 		return operatingLeverage;
 	}
+	
+	public double getLearningRate() {
+		return learningRate;
+	}
 
 	public double getOperatingLeverageAdjustment() {
 		return operatingLeverageAdjustment();
@@ -365,12 +365,8 @@ public class Firm {
 		return flexibilityCost;
 	}
 
-	public static double getFlexCostMean() {
-		return flexCostMean;
-	}
-
-	public static double getFlexCostStdDev() {
-		return flexCostStdDev;
+	public static double getFlexCostScale() {
+		return flexCostScale;
 	}
 
 	public double getOptimalMarkUp() {

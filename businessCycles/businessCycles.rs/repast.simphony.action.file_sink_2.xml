@@ -33,6 +33,8 @@
     <string>FlexibilityCost</string>
     <string>MarkUp</string>
     <string>OptimalMarkUp</string>
+    <string>Expon</string>
+    <string>LearningRate</string>
   </sourceIds>
   <fileName>Firms.csv</fileName>
   <addTimeStamp>true</addTimeStamp>
