@@ -37,10 +37,10 @@ public class SupplyManager {
 	public double totalFBeforeExit = 1.0;
 
 	public Normal iniKNormal = null;
-	public Normal operatingLeverageNormal = null;
-	public Beta learningRateDistrib = null;
+	public Normal learningRateNormal = null;
 	public Normal entrantsNormal = null;
 	public Normal firstUnitCostNormal = null;
+	public Uniform operatingLeverageUniform = null;
 
 	public static int periods;
 
@@ -59,62 +59,43 @@ public class SupplyManager {
 		recessionHandler.scheduleRecessions();
 
 		/* Create distributions for initial variables of firms */
-		double opLevMean = (Double) GetParameter("operatingLeverageMean");
-		double opLevStdDev = (Double) GetParameter("operatingLeverageStdDev")
-				* opLevMean;
-		iniKNormal = RandomHelper.createNormal(
-				(Double) GetParameter("iniKMean"),
-				(Double) GetParameter("iniKStdDev")
-						* (Double) GetParameter("iniKMean"));
+		double iniKMean = (Double) GetParameter("iniKMean");
+		double iniKStdDev = (Double) GetParameter("iniKStdDev") * iniKMean;
+		iniKNormal = RandomHelper.createNormal(iniKMean, iniKStdDev);
 
-		operatingLeverageNormal = RandomHelper.createNormal(opLevMean,
-				opLevStdDev);
+		double entrantsMean = (Double) GetParameter("entrantsMean");
+		double entrantsStdDev = (Double) GetParameter("entrantsStdDev") * entrantsMean;
+		entrantsNormal = RandomHelper.createNormal(entrantsMean, entrantsStdDev);
 
-		entrantsNormal = RandomHelper.createNormal(
-				(Double) GetParameter("entrantsMean"),
-				(Double) GetParameter("entrantsStdDev")
-						* (Double) GetParameter("entrantsMean"));
+		double firstUnitCostMean = (Double) GetParameter("firstUnitCostMean");
+		double firstUnitCostStdDev = (Double) GetParameter("firstUnitCostStdDev") * firstUnitCostMean;
+		firstUnitCostNormal = RandomHelper.createNormal(firstUnitCostMean, firstUnitCostStdDev);
 
-		firstUnitCostNormal = RandomHelper.createNormal(
-				(Double) GetParameter("firstUnitCostMean"),
-				(Double) GetParameter("firstUnitCostStdDev")
-						* (Double) GetParameter("firstUnitCostMean"));
+		double learningRateMean = (Double) GetParameter("learningRateMean");
+		double learningRateStdDev = (Double) GetParameter("learningRateStdDev") * learningRateMean;
+		learningRateNormal = RandomHelper.createNormal(learningRateMean, learningRateStdDev);
 
 		/*
-		 * If the learning rate variance is too big for the mean, it is set to
-		 * the minimum value
+		 * Operating Leverage is a Uniform
 		 */
-		double lRMean = (Double) GetParameter("learningRateMean");
-
-		double lRVar = pow(
-				(Double) GetParameter("learningRateStdDev") * lRMean, 2.0);
-
-		if (lRVar >= (lRMean - 0.5) * (1 - lRMean)) {
-			lRVar = (lRMean - 0.5) * (1 - lRMean) - 0.000001;
-		}
-
-		double alfa = 2 / lRVar * (lRMean - 0.5)
-				* ((lRMean - 0.5) * (1 - lRMean) - lRVar);
-		double beta = 2 / lRVar * (1 - lRMean)
-				* ((lRMean - 0.5) * (1 - lRMean) - lRVar);
-		learningRateDistrib = RandomHelper.createBeta(alfa, beta);
+		double operatingLeverageMin = (Double) GetParameter("operatingLeverageMin");
+		double operatingLeverageMax = (Double) GetParameter("operatingLeverageMax");
+		operatingLeverageUniform = RandomHelper.createUniform(operatingLeverageMin, operatingLeverageMax);
 
 		Firm.supplyManager = this;
 
 	}
 
-
 	@ScheduledMethod(start = 1d, interval = 1)
 	public void step() {
 
 		// Manage Entry
-		int potentialEntrantsPerPeriod = (int) round(entrantsNormal
-				.nextDouble() / periods);
+		int potentialEntrantsPerPeriod = (int) round(entrantsNormal.nextDouble() / periods);
 		if (potentialEntrantsPerPeriod > 0)
 			entry(potentialEntrantsPerPeriod);
 
 		processOffers();
-		
+
 		killFirms();
 
 		// Planning
@@ -163,19 +144,18 @@ public class SupplyManager {
 
 		price = Demand.price(totalQBeforeExit);
 
-
 	}
-	
+
 	private void killFirms() {
 
 		if (!RecessionHandler.exitOnRecession() && RecessionHandler.inRecession()) {
-			
+
 			totalFirms = totalFBeforeExit;
 			totalQuantity = totalQBeforeExit;
 			return;
-			
+
 		} else {
-			
+
 			IndexedIterable<Object> firms = context.getObjects(Firm.class);
 
 			List<Firm> toKill = new ArrayList<Firm>(firms.size());
@@ -195,8 +175,8 @@ public class SupplyManager {
 			}
 
 			firms = context.getObjects(Firm.class);
-	
-			totalFirms = firms.size();			
+
+			totalFirms = firms.size();
 
 			if (totalFirms == 0.0) {
 				totalQuantity = 0.0;
@@ -211,7 +191,6 @@ public class SupplyManager {
 		}
 
 	}
-
 
 	public String toString() {
 

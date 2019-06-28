@@ -17,14 +17,6 @@
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>OperatingLeverageAdjustment</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OperatingLeverageAdjustment</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOperatingLeverageAdjustment</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>AcumProfit</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>AcumProfit</id>
@@ -73,27 +65,11 @@
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>FixedCostPerUnit</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FixedCostPerUnit</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFixedCostPerUnit</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>MarketShare</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>MarketShare</id>
         <className>businessCycles.Firm</className>
         <methodName>getMarketShare</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MedCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MedCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMedCost</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
@@ -110,38 +86,6 @@
         <id>Price</id>
         <className>businessCycles.Firm</className>
         <methodName>getPrice</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>TotalFixedCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>TotalFixedCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getTotalFixedCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>TotalVarCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>TotalVarCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getTotalVarCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>VarCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>VarCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getVarCost</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>VarCostWoAdj</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>VarCostWoAdj</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getVarCostWoAdj</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
@@ -169,22 +113,6 @@
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>OpLevMean</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OpLevMean</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOpLevMean</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OpLevStdDev</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OpLevStdDev</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOpLevStdDev</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>MaxFunding</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>MaxFunding</id>
@@ -198,14 +126,6 @@
         <id>Invest</id>
         <className>businessCycles.Firm</className>
         <methodName>getInvest</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>FlexibilityCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FlexibilityCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFlexibilityCost</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
@@ -230,14 +150,6 @@
         <id>Expon</id>
         <className>businessCycles.Firm</className>
         <methodName>getExpon</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>LearningRate</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LearningRate</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getLearningRate</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

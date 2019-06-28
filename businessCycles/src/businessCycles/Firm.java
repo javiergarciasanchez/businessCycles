@@ -33,10 +33,18 @@ public class Firm {
 	private double perPeriodPerformance = 0.0;
 	private double acumQ = 0.0;
 	private double acumProfit = 0.0;
+	private double profit = 0.0;
 	private double maxFunding = 0.0;
 	private double invest = 0.0;
 	private double flexibilityCost = 0.0;
+	private double unitProdCost = 0.0;
+	private double learningComponent = 0.0;
+	private double operatingLevarageComponent = 0.0;
+	private double flexibilityCostComponent = 0.0;
+	private double totalProdCost = 0.0;
+	private double totalNonProdCost = 0.0;
 	private double optimalMarkUp = 0.0;
+	private double marginalCost = 0.0;
 	private double markUp = 0.0;
 
 	// Local firm variables - stable along firm life
@@ -47,7 +55,6 @@ public class Firm {
 	private double born = 0.0;
 
 	// Static Firm variables - identical for all firms
-	private static double capitalProductivityPerPeriod;
 	private static double minVarCost;
 	private static double minCapital;
 	private static double costOfCapitalPerPeriod;
@@ -58,8 +65,8 @@ public class Firm {
 	private static double demElast;
 	private static double supElast;
 
-	private static double opLevMean;
-	private static double opLevStdDev;
+	private static double operatingLeverageMid;
+	private static double operatingLeverageScale;
 	private static double flexCostScale;
 	private static double deprecPerPeriod;
 	private static double maxExtFundPerPeriod;
@@ -80,13 +87,14 @@ public class Firm {
 
 		capital = max((Double) GetParameter("minimumCapital"), supplyManager.iniKNormal.nextDouble());
 
-		operatingLeverage = min(1.0, max(0.0, supplyManager.operatingLeverageNormal.nextDouble()));
+		operatingLeverage = supplyManager.operatingLeverageUniform.nextDouble();
 
 		// Initial perfomance is set to minPerformance
 		perPeriodPerformance = minPerformance;
 
+		// Learning rate is a truncated Normal 
 		// 0.5 < learning rate <= 1.0
-		learningRate = min(1.0, max(supplyManager.learningRateDistrib.nextDouble(), 0.51));
+		learningRate = min(0.99, max(supplyManager.learningRateNormal.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
 
 	}
@@ -96,7 +104,6 @@ public class Firm {
 
 		int periods = (Integer) GetParameter("periods");
 
-		capitalProductivityPerPeriod = (Double) GetParameter("capitalProductivity") / periods;
 		minVarCost = (Double) GetParameter("minVarCost");
 		minCapital = (Double) GetParameter("minimumCapital");
 		costOfCapitalPerPeriod = (Double) GetParameter("costOfCapital") / periods;
@@ -107,8 +114,12 @@ public class Firm {
 		demElast = (Double) GetParameter("demandElasticity");
 		supElast = (Double) GetParameter("supplyElasticity");
 
-		opLevMean = (Double) GetParameter("operatingLeverageMean");
-		opLevStdDev = (Double) GetParameter("operatingLeverageStdDev") * opLevMean;
+		double opLevMin = (Double) GetParameter("operatingLeverageMin");
+		double opLevMax = (Double) GetParameter("operatingLeverageMax");
+		operatingLeverageMid = (opLevMin + opLevMax) / 2.0;
+		operatingLeverageScale = (opLevMax - opLevMin) / 2.0;
+		
+		
 		flexCostScale = (Double) GetParameter("flexibilityCostScale");
 		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
 		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding") / periods;
@@ -119,7 +130,7 @@ public class Firm {
 
 	public boolean checkEntry() {
 
-		double expectedQ = Demand.getCapacityUsed() * capital * capitalProductivityPerPeriod;
+		double expectedQ = Demand.getCapacityUsed() * capital;
 		
 		double expectedAnnualReturn = profit(expectedQ, getPrice()) *
 				SupplyManager.periods / getCapital();
@@ -134,7 +145,7 @@ public class Firm {
 			capital = nextCapital;
 		}
 
-		quantity = Demand.getCapacityUsed() * capital * capitalProductivityPerPeriod;
+		quantity = Demand.getCapacityUsed() * capital;
 
 		return quantity;
 
@@ -142,43 +153,60 @@ public class Firm {
 
 	public double profit(double q, double p) {
 
-		return p * q - totalProdCost(q) - totalNonProdCost();
-
+		profit = p * q - totalProdCost(q) - totalNonProdCost();
+		return profit;
+		
 	}
-
-	/*
-	 * Calculates cost using learning curve: cost of new accumulated Q minus old
-	 * accumulated Q. See http://maaw.info/LearningCurveSummary.htm (Wright model)
-	 */
+		
 	private double totalProdCost(double quantity) {
 
-		// Get Learning curve cost + productive minimum cost
-		double lc = firstUnitCost * (pow(acumQ + quantity, 1.0 + expon) - pow(acumQ, 1.0 + expon))
-				+ minVarCost * quantity;
-
-		// Return flexibility adjusted value
-		return lc * operatingLeverageAdjustment();
-
+		unitProdCost = learningComponent() * operatingLeverageComponent() * flexibilityCostComponent();
+		
+		totalProdCost = unitProdCost * quantity;
+		
+		return totalProdCost;
+		
 	}
 
 	/*
-	 * Adds the cost of flexibility. Increases variable cost in firms that have
-	 * lower fixed costs. If opLev = 100% (All costs depend on size) adjustment = 1
-	 * If capacityUsed = 100% adjustment = flexibilityCost
+	 * learning curve effect
 	 */
-	private double operatingLeverageAdjustment() {
+	private double learningComponent() {
+		double learningFactor = ((acumQ >= 1) ? pow(acumQ, expon) : 1);
+		
+		learningComponent = firstUnitCost * learningFactor + minVarCost;
 
-		flexibilityCost = 1 + flexCostScale * (opLevMean - operatingLeverage) / opLevStdDev;
+		return learningComponent;
+	}
+	
+	
+	/*
+	 * Adjusts cost to take into account variable and fixed costs equals 1 at full
+	 * capacity
+	 */
+	private double operatingLeverageComponent() {
+		operatingLevarageComponent = operatingLeverage / getCapacityUsed() + (1 - operatingLeverage);
+		return operatingLevarageComponent;
+	}
 
-		return flexibilityCost * (operatingLeverage + (1 - operatingLeverage) * Demand.getCapacityUsed());
+	/*
+	 * Increases cost for flexible firms (low operating leverage)
+	 */
+	private double flexibilityCostComponent() {
+		flexibilityCostComponent = 1 + flexCostScale * (operatingLeverageMid - operatingLeverage) / operatingLeverageScale;
+		return flexibilityCostComponent;
+	}
 
+	private double getCapacityUsed() {
+		return Demand.getCapacityUsed();
 	}
 
 	private double totalNonProdCost() {
-		return (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
+		totalNonProdCost = (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
+		return totalNonProdCost;
 	}
 
-	/**
+	/*
 	 * 
 	 * Process demand respond and returns false if firm exits the industry,
 	 * otherwise returns true
@@ -218,17 +246,6 @@ public class Firm {
 
 	}
 
-	/*
-	 * It is derived maximizing economic profit (ie substracting cost of capital)
-	 */
-	private double marginalCost() {
-
-		return (firstUnitCost * (1.0 + expon) * pow(acumQ + quantity, expon) + minVarCost)
-				* operatingLeverageAdjustment()
-				+ (costOfCapitalPerPeriod + deprecPerPeriod) / capitalProductivityPerPeriod;
-
-	}
-
 	private double netInvestment() {
 
 		optimalMarkUp = (demElast + (1 - getMarketShare()) * supElast)
@@ -239,13 +256,21 @@ public class Firm {
 		return invParam * (1 - optimalMarkUp / markUp);
 
 	}
+	
+	/*
+	 * Calculates marginal cost at full capacity
+	 */
+	private double marginalCost() {
+		marginalCost = learningComponent() * flexibilityCostComponent() + costOfCapitalPerPeriod + deprecPerPeriod;
+		return marginalCost;
+	}
 
 	/*
 	 * Methods to probe firm state
 	 */
 	public double getMarketShare() {
 
-		return getQuantity() / supplyManager.getTotalQuantity();
+		return quantity / supplyManager.totalQuantity;
 
 	}
 
@@ -258,7 +283,7 @@ public class Firm {
 	}
 
 	public double getProfit() {
-		return profit(getQuantity(), getPrice());
+		return profit;
 	}
 
 	public double getPerformance() {
@@ -266,7 +291,7 @@ public class Firm {
 	}
 
 	private double getPerPeriodReturn() {
-		return getProfit() / getCapital();
+		return profit / capital;
 	}
 
 	public double getReturn() {
@@ -306,27 +331,23 @@ public class Firm {
 	}
 
 	public double getMedCost() {
-		return (getPrice() * getQuantity() - getProfit()) / getQuantity();
+		return (totalProdCost + totalNonProdCost) / quantity;
 	}
 
-	public double getTotalVarCost() {
-		return totalProdCost(getQuantity());
+	public double getTotalProdCost() {
+		return totalProdCost;
 	}
 
-	public double getVarCost() {
-		return getTotalVarCost() / getQuantity();
+	public double getUnitProdCost() {
+		return unitProdCost;
 	}
 
-	public double getVarCostWoAdj() {
-		return getVarCost() / getOperatingLeverageAdjustment();
+	public double getTotalNonProdCost() {
+		return totalNonProdCost;
 	}
 
-	public double getTotalFixedCost() {
-		return totalNonProdCost();
-	}
-
-	public double getFixedCostPerUnit() {
-		return getTotalFixedCost() / getQuantity();
+	public double getNonProdCostPerUnit() {
+		return totalNonProdCost / quantity;
 	}
 
 	public double getOperatingLeverage() {
@@ -335,10 +356,6 @@ public class Firm {
 	
 	public double getLearningRate() {
 		return learningRate;
-	}
-
-	public double getOperatingLeverageAdjustment() {
-		return operatingLeverageAdjustment();
 	}
 
 	public double getCapital() {
@@ -351,14 +368,6 @@ public class Firm {
 
 	public double getInvest() {
 		return invest;
-	}
-
-	public static double getOpLevMean() {
-		return opLevMean;
-	}
-
-	public static double getOpLevStdDev() {
-		return opLevStdDev;
 	}
 
 	public double getFlexibilityCost() {
