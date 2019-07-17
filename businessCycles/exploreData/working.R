@@ -5,7 +5,7 @@ source('C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R')
 path = "C:/Users/javie/git/businessCycles/businessCycles/output"
 setwd(path)
 
-fileID = "2019.jun..05.15_36_37"
+fileID = "2019.jul..16.20_49_06"
 
 f = read_csv(paste0("Firms.", fileID, ".csv"))
 p = read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
@@ -23,9 +23,9 @@ fPlus = f %>%
   full_join(f, by = c("run", "FirmNumID")) %>%
   
   # Add Margin and optimal Mark Up divided by Mark up
-  mutate(OptMUDivMU = OptimalMarkUp / MarkUp,
-         FirmMargin = MarkUp - 1,
-         Sales = Quantity * Price)
+  mutate(Sales = Quantity * Price,
+         UsedCap = Quantity / Capital,
+         PrMinShMC = Price - ShortTermMarginalCost)
 
 idxVars = c("run", "random_seed", "tick", "FirmNumID")
 
@@ -43,18 +43,15 @@ quantileVars = c("OLQ", "QQ", "OLQQ")
 filteredFScQ = fScQ %>%
   
   filter(OLQ != 2,
-         recessionMagnitude == 0.3 | recessionMagnitude == 0.0,
-         exitOnRecession == FALSE
+         recessionMagnitude == 0.6 | recessionMagnitude == 0.0,
+         recessionDuration == 3
   ) 
 
 
 # Drawing
-#varsToDraw = c("Quantity", "MarketShare", "MedCost", "FirmMargin", "Price")
-varsToDraw = c("Quantity", "Profit", "MedCost", "FirmMargin", "Price","Sales")
-#varsToDraw = c("OpLevMean","OpLevStdDev", "OperatingLeverage", "MaxFunding", "Invest", "FlexibilityCost")
-#varsToDraw = c("OperatingLeverage", "MaxFunding", "Invest")
-#varsToDraw = c("Invest", "OptimalMarkUp", "MarkUp", "optMUDivMU")
-
+#varsToDraw = c("Quantity", "UsedCap", "Capital", "MedCost", "Price","Sales")
+varsToDraw = c("UsedCap", "ShortTermMarginalCost", "Price", "MedCost", "PrMinShMC")
+#varsToDraw = c("UsedCap", "MedCost", "PrMinShMC")
 
 # VarsToDraw
 filteredFScQ %>%
@@ -145,25 +142,3 @@ dataByQuantileD %>%
   
   drawVars(relevantParams, tit = "Difference of Differences: OLQ 1 - OLQ 3") %>%
   htmlwidgets::saveWidget("DataByQ_DD.html")
-
-
-### Aggregated market data
-s = read_csv(paste0("Supply.", fileID, ".csv"))
-ssc = s %>% 
-  addScenarios(p, relevantParams)
-
-aggVarsToDraw = c("Dead", "BornFirms")
-aggVarsToDraw.d = sapply(aggVarsToDraw, function(x) paste0(x, ".d"))
-
-sscG = ssc %>% 
-  select_at(vars(relevantParams, aggVarsToDraw, c("run","tick","random_seed"))) %>%
-  
-  # Add percentage variation per firm respect to base scenario
-  addDiff(aggVarsToDraw, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
-  set_names(~sub("\\.x","",.)) %>%
-  
-  
-  group_by_at(vars(relevantParams, "tick")) %>%
-  summarise_at( vars(aggVarsToDraw, aggVarsToDraw.d), mean, na.rm = TRUE) %>%
-  ungroup()  
-

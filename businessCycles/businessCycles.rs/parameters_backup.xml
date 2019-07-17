@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
 					<parameter name="stopAt" displayName="Stop At" type="double" 
-						defaultValue="50.0" 
+						defaultValue="60.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -24,14 +24,14 @@
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
-				<parameter name="learningRateMean" displayName="Learning Rate Mean" type="double" 
-						defaultValue="0.9" 
+				<parameter name="learningRateStdDev" displayName="Learning Rate Std Dev" type="double" 
+						defaultValue="0.1" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="firstUnitCostMean" displayName="First Unit Cost Mean (as spread over min var cost)" type="double" 
-						defaultValue="2.0" 
+						defaultValue="20.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -42,16 +42,16 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
-				<parameter name="operatingLeverageMax" displayName="Operating Leverage Maximum" type="double" 
-						defaultValue="0.6" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
 						defaultValue="2.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="entryOnlyAtStart" displayName="Entry only at Start and no Exit?" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 				<parameter name="performanceWeight" displayName="Performance Weight" type="double" 
@@ -66,20 +66,26 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="flexibilityCostScale" displayName="Flexibility Cost Scale" type="double" 
-						defaultValue="0.05" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
 				<parameter name="periods" displayName="Periods per Year" type="int" 
 						defaultValue="1" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="operatingLeverageMin" displayName="Opeating Leverage Minimum" type="double" 
+						defaultValue="0.1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="flexibilityCostScale" displayName="Flexibility Cost Scale" type="double" 
+						defaultValue="0.05" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 				<parameter name="recessionMagnitude" displayName="Recessions Magnitude (sep by :  - colon)" type="java.lang.String" 
-						defaultValue="0" 
+						defaultValue="0.3" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
@@ -108,26 +114,20 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
-				<parameter name="priceOfSubstitute" displayName="Price Of Substitute" type="double" 
-						defaultValue="4.0" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-				<parameter name="operatingLeverageMin" displayName="Opeating Leverage Minimum" type="double" 
-						defaultValue="0.1" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
 				<parameter name="demandParameter" displayName="Demand Parameter" type="double" 
-						defaultValue="60.0" 
+						defaultValue="600.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="costOfCapital" displayName="Cost Of Capital" type="double" 
 						defaultValue="0.08" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="operatingLeverageMax" displayName="Operating Leverage Maximum" type="double" 
+						defaultValue="0.4" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -162,8 +162,8 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="learningRateStdDev" displayName="Learning Rate Std Dev" type="double" 
-						defaultValue="0.1" 
+				<parameter name="learningRateMean" displayName="Learning Rate Mean" type="double" 
+						defaultValue="0.8" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -175,12 +175,12 @@
 									
 		/>
 				<parameter name="entrantsMean" displayName="Entrants Mean" type="double" 
-						defaultValue="40.0" 
+						defaultValue="4.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="minVarCost" displayName="Minimum Variable Cost" type="double" 
+				<parameter name="minLearningCostPerUnit" displayName="Minimum Learning Cost Per Unit" type="double" 
 						defaultValue="1.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"

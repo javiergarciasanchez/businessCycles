@@ -6,10 +6,18 @@
   <sourceIds class="linked-hash-set">
     <string>BornFirms</string>
     <string>Dead</string>
-    <string>TotalFBeforeExit</string>
-    <string>TotalFirms</string>
-    <string>TotalQBeforeExit</string>
+    <string>Id</string>
+    <string>Price</string>
     <string>TotalQuantity</string>
+    <string>toString</string>
+    <string>EstimatedPrice</string>
+    <string>EstimatedTotalQuantity</string>
+    <string>TotalFirmsAfterEntry</string>
+    <string>TotalCapitalAfterEntry</string>
+    <string>EstimatedPriceForPlanning</string>
+    <string>TotalCapitalAfterExit</string>
+    <string>TotalFirmsAfterExit</string>
+    <string>AvgShortTermMarginalCost</string>
     <string>tick</string>
     <string>run</string>
     <string>random_seed</string>

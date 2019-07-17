@@ -4,23 +4,40 @@
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
+    <string>FirmNumID</string>
     <string>AcumProfit</string>
     <string>AcumQuantity</string>
     <string>Age</string>
     <string>Born</string>
     <string>Capital</string>
+    <string>Expon</string>
     <string>FirstUnitCost</string>
+    <string>FlexCostScale</string>
+    <string>FlexibilityCost</string>
+    <string>Invest</string>
+    <string>LearningRate</string>
     <string>MarketShare</string>
+    <string>MaxFunding</string>
+    <string>MedCost</string>
+    <string>NonProdCostPerUnit</string>
     <string>OperatingLeverage</string>
+    <string>Performance</string>
     <string>Price</string>
-    <string>FirmNumID</string>
     <string>Profit</string>
     <string>Quantity</string>
-    <string>MaxFunding</string>
-    <string>Invest</string>
-    <string>MarkUp</string>
-    <string>OptimalMarkUp</string>
-    <string>Expon</string>
+    <string>Return</string>
+    <string>TotalNonProdCost</string>
+    <string>TotalProdCost</string>
+    <string>UnitProdCost</string>
+    <string>toString</string>
+    <string>FlexibilityCostComponent</string>
+    <string>LearningComponent</string>
+    <string>OperatingLevarageComponent</string>
+    <string>OptimalFullCapacityMarkUp</string>
+    <string>LongTermMarginalCost</string>
+    <string>ShortTermMarginalCost</string>
+    <string>CurrentMarkUpForPlanning</string>
+    <string>CapitalShareAfterExit</string>
     <string>tick</string>
     <string>run</string>
     <string>random_seed</string>

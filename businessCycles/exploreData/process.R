@@ -5,9 +5,9 @@ library(plotly)
 getRelevantParams = function(p) {
   p %>%
     select(-"run", -"randomSeed") %>%
-    summarise_all(funs(n_distinct(.))) %>%
+    summarise_all(list(~n_distinct(.))) %>%
     
-    select_if(funs(first(. > 1))) %>%
+    select_if(list(~first(. > 1))) %>%
     names()
 }
 
@@ -200,4 +200,19 @@ drawVars = function(df, relevantParams, v , tit){
     
   }
 
+}
+
+drawOverImposedVars = function(df, relevantParams, tit) {
+  df %>%
+    addScenariosNames() %>%
+    select_at(vars(-relevantParams)) %>%
+    
+    gather(varToDraw, value, -c(sc, tick)) %>%
+    
+    ggplot(aes(tick, value, color = varToDraw)) +
+    geom_line() +
+    facet_wrap( ~ sc, scales = "free_y") +
+    labs(title = tit)
+  
+  ggplotly() 
 }

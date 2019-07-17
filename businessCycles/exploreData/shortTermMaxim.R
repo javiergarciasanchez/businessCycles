@@ -1,3 +1,5 @@
+library(tidyverse)
+
 epsilon = 2
 psi = 2
 meanPhi = 0.6
@@ -6,16 +8,26 @@ mu = 0.05
 tau = 2
 z = 1
 
-runVal = p %>%
-  filter(recessionMagnitude == 0.05,
-         recessionStart == 5,
-         recessionDuration == 1,
-         exitOnRecession == TRUE,
-         randomSeed == 1) %>%
-  select(run) %>%
-  .[[1]]
+Delta = 600
+elast = 2
 
-tickVal = 5
+sup_elast = 2
+
+demand = function(q) {
+  Delta * q^(- 1 / elast)
+}
+
+inverseDemand = function(p) {
+  (Delta/p)^elast 
+}
+
+sup_Delta = function(q0, p0){
+  p0 / q0^( 1 / sup_elast)
+}
+
+supply = function(q, q0, p0) {
+  sup_Delta(q0, p0) * q^( 1 / sup_elast)
+}
 
 ms = function(p){
   
@@ -61,3 +73,14 @@ mc = function(firm){
   return(l * flexCost * (1 - phi))
   
 }
+
+runVal = p %>%
+  filter(recessionMagnitude == 0.05,
+         recessionStart == 5,
+         recessionDuration == 1,
+         exitOnRecession == TRUE,
+         randomSeed == 1) %>%
+  select(run) %>%
+  .[[1]]
+
+tickVal = 5

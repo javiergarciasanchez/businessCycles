@@ -12,29 +12,40 @@
  */
 package businessCycles;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.math3.util.FastMath;
 
 import cern.jet.random.*;
-import repast.simphony.context.Context;
+import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.schedule.*;
+import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.parameter.*;
 import repast.simphony.random.*;
-import repast.simphony.util.collections.IndexedIterable;
 import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
 
-public class SupplyManager {
+public class SupplyManager extends DefaultContext<Firm> {
 
 	private RecessionHandler recessionHandler;
 
-	public double totalQuantity = 0;
-	public double price = 0;
-	public double dead = 0;
-	public int bornFirms = 0;
-	public double totalFirms = 1.0;
-	public double totalQBeforeExit = 0;
-	public double totalFBeforeExit = 1.0;
+	private double avgShortTermMarginalCost = 0.0;
+	private double estimatedTotalQuantityPerPeriod = 0.0;
+	private double estimatedPrice = 0.0;
+
+	private double totalCapitalAfterEntry = 0.0;
+	private double totalCapitalAfterExit = 0.0;
+
+	private double price = 0.0;
+	private double totalQuantityPerPeriod = 0;
+
+	private double estimatedPriceForPlanning = 0.0;
+
+	private double dead = 0;
+	private int bornFirms = 0;
+	private double totalFirmsAfterEntry = 0.0;
+	private double totalFirmsAfterExit = 1.0;
 
 	public Normal iniKNormal = null;
 	public Normal learningRateNormal = null;
@@ -43,17 +54,13 @@ public class SupplyManager {
 	public Uniform operatingLeverageUniform = null;
 
 	public static int periods;
+	private static boolean entryOnlyAtStart;
 
-	private Context<Object> context;
+	public SupplyManager() {
 
-	public SupplyManager(Context<Object> context) {
+		super("SupplyManager");
 
-		this.context = context;
-		context.add(this);
-
-		price = (Double) GetParameter("priceOfSubstitute");
-
-		periods = (Integer) GetParameter("periods");
+		price = Demand.getPriceOfSubstitute();
 
 		recessionHandler = new RecessionHandler();
 		recessionHandler.scheduleRecessions();
@@ -86,22 +93,69 @@ public class SupplyManager {
 
 	}
 
+	public static void readParams() {
+		periods = (Integer) GetParameter("periods");
+		entryOnlyAtStart = (Boolean) GetParameter("entryOnlyAtStart");
+	}
+
 	@ScheduledMethod(start = 1d, interval = 1)
 	public void step() {
 
 		// Manage Entry
-		int potentialEntrantsPerPeriod = (int) round(entrantsNormal.nextDouble() / periods);
+		int potentialEntrantsPerPeriod;
+		if (GetTickCount() == 1 && entryOnlyAtStart)
+			potentialEntrantsPerPeriod = (int) round(entrantsNormal.nextDouble());
+		else if (!entryOnlyAtStart)
+			potentialEntrantsPerPeriod = (int) round(entrantsNormal.nextDouble() / periods);
+		else
+			potentialEntrantsPerPeriod = 0;
+
 		if (potentialEntrantsPerPeriod > 0)
 			entry(potentialEntrantsPerPeriod);
 
-		processOffers();
+		// Total Firms After Entry
+		totalFirmsAfterEntry = size();
 
-		killFirms();
+		// If there is no firm, return setting empty counters
+		if (totalFirmsAfterEntry < 1.0) {
+			totalCapitalAfterEntry = 0.0;
+			totalCapitalAfterExit = 0.0;
+			totalQuantityPerPeriod = 0.0;
+			price = Demand.getPriceOfSubstitute();
+			dead = 0;
+			totalFirmsAfterExit = 0.0;
+			return;
+		}
+
+		// Apply planned investment and aggregate for short term maximization
+		totalCapitalAfterEntry = stream().mapToDouble(f -> f.applyPlannedInvestment()).sum();
+
+		// Calculate estimated short term market equilibrium
+		calculateShortTermEquilibrium();
+
+		// Process Offers
+		totalQuantityPerPeriod = stream().mapToDouble(f -> f.offer()).sum();
+		price = Demand.priceFromQuantityPerPeriod(totalQuantityPerPeriod);
+
+		// Process Demand response and Kill Firms
+		if (killActive()) {
+			dead = processDemandAndKillFirms();
+			totalFirmsAfterExit = size();
+			totalCapitalAfterExit = stream().mapToDouble(f -> f.getCapital()).sum();
+		} else {
+			stream().forEach(Firm::processDemandResponse);
+			dead = 0;
+			totalFirmsAfterExit = totalFirmsAfterEntry;
+			totalCapitalAfterExit = totalCapitalAfterEntry;
+		}
+
+		// Estimated price for planning
+		// price without recession and at full capacity
+		double fullCapacityQuantityPerPeriodAfterExit = Firm.fullCapacityQuantityPerPeriod(totalCapitalAfterExit);
+		estimatedPriceForPlanning = Demand.noRecesPriceFromPeriodQuantity(fullCapacityQuantityPerPeriodAfterExit);
 
 		// Planning
-		IndexedIterable<Object> firms = context.getObjects(Firm.class);
-		for (Object f : firms)
-			((Firm) f).plan();
+		stream().forEach(Firm::plan);
 
 	}
 
@@ -113,7 +167,7 @@ public class SupplyManager {
 		for (int j = 1; j <= potentialEntrants; j++) {
 
 			// Destroy if not profitable
-			f = new Firm(context);
+			f = new Firm();
 			if (f.checkEntry())
 				bornFirms++;
 			else
@@ -123,72 +177,56 @@ public class SupplyManager {
 
 	}
 
-	private void processOffers() {
+	/*
+	 * Caculates short term equilibrium sets static fields to their values
+	 * 
+	 * - avgShortTermMarginalCost - estimatedTotalQuantity - estimatedPrice
+	 * 
+	 */
+	private void calculateShortTermEquilibrium() {
 
-		IndexedIterable<Object> firms = context.getObjects(Firm.class);
+		double numFirmDemElast = totalFirmsAfterEntry * Demand.getDemandElasticity();
 
-		totalFBeforeExit = firms.size();
+		avgShortTermMarginalCost = stream().mapToDouble(f -> f.getCalculatedShortTermMarginalCost()).average()
+				.orElse(0.0);
 
-		if (totalFBeforeExit == 0.0) {
-			totalQBeforeExit = 0.0;
-		} else {
-			double tmpQ = 0.0;
-			for (Object f : firms) {
+		double fullCapacityTotalQuantityPerPeriod = Firm.fullCapacityQuantityPerPeriod(totalCapitalAfterEntry);
+		if (avgShortTermMarginalCost == 0.0)
+			estimatedTotalQuantityPerPeriod = fullCapacityTotalQuantityPerPeriod;
 
-				tmpQ += ((Firm) f).offer();
+		else {
+			double tmpPrice = avgShortTermMarginalCost * numFirmDemElast / (numFirmDemElast - 1);
 
-			}
-
-			totalQBeforeExit = tmpQ;
+			estimatedTotalQuantityPerPeriod = FastMath.min(fullCapacityTotalQuantityPerPeriod,
+					Demand.inverseDemandPerPeriod(tmpPrice));
 		}
 
-		price = Demand.price(totalQBeforeExit);
+		estimatedPrice = Demand.priceFromQuantityPerPeriod(estimatedTotalQuantityPerPeriod);
 
 	}
 
-	private void killFirms() {
+	private boolean killActive() {
 
-		if (!RecessionHandler.exitOnRecession() && RecessionHandler.inRecession()) {
+		if (entryOnlyAtStart)
+			return false;
 
-			totalFirms = totalFBeforeExit;
-			totalQuantity = totalQBeforeExit;
-			return;
+		else if (RecessionHandler.exitOnRecession() && RecessionHandler.inRecession())
+			return false;
 
-		} else {
+		else
+			return true;
 
-			IndexedIterable<Object> firms = context.getObjects(Firm.class);
+	}
 
-			List<Firm> toKill = new ArrayList<Firm>(firms.size());
+	private double processDemandAndKillFirms() {
 
-			for (Object f : context.getObjects(Firm.class)) {
+		// Process demand and collect firms to be killed
+		List<Firm> toKill = stream().filter(f -> !f.processDemandResponse()).collect(Collectors.toList());
 
-				// Process Demand Response
-				if (!((Firm) f).processDemandResponse()) {
-					toKill.add((Firm) f);
-				}
+		double toKillSize = toKill.size();
+		toKill.forEach(RepastEssentials::RemoveAgentFromModel);
 
-			}
-
-			dead = toKill.size();
-			for (Firm f : toKill) {
-				RemoveAgentFromModel(f);
-			}
-
-			firms = context.getObjects(Firm.class);
-
-			totalFirms = firms.size();
-
-			if (totalFirms == 0.0) {
-				totalQuantity = 0.0;
-			} else {
-				double tmpQ = 0.0;
-				for (Object f : firms) {
-					tmpQ += ((Firm) f).getQuantity();
-				}
-				totalQuantity = tmpQ;
-			}
-
-		}
+		return toKillSize;
 
 	}
 
@@ -198,13 +236,37 @@ public class SupplyManager {
 
 	}
 
-	public double getCapacityUsed() {
-		return Demand.getCapacityUsed();
+	public double getAvgShortTermMarginalCost() {
+		return avgShortTermMarginalCost;
 	}
 
-	@Parameter(displayName = "Total Quantity", usageName = "totalQuantity")
+	public double getEstimatedTotalQuantity() {
+		return estimatedTotalQuantityPerPeriod;
+	}
+
+	public double getEstimatedPrice() {
+		return estimatedPrice;
+	}
+
+	public double getTotalCapitalAfterEntry() {
+		return totalCapitalAfterEntry;
+	}
+
+	public double getTotalCapitalAfterExit() {
+		return totalCapitalAfterExit;
+	}
+
+	// Quantity is the amount offered including killed firms
+	public double getTotalQuantityPerPeriod() {
+		return totalQuantityPerPeriod;
+	}
+
 	public double getTotalQuantity() {
-		return totalQuantity;
+		return totalQuantityPerPeriod * periods;
+	}
+
+	public double getEstimatedPriceForPlanning() {
+		return estimatedPriceForPlanning;
 	}
 
 	@Parameter(displayName = "Price", usageName = "price")
@@ -222,19 +284,12 @@ public class SupplyManager {
 		return bornFirms;
 	}
 
-	@Parameter(displayName = "Total Firms", usageName = "totalFirms")
-	public double getTotalFirms() {
-		return totalFirms;
+	public double getTotalFirmsAfterEntry() {
+		return totalFirmsAfterEntry;
 	}
 
-	@Parameter(displayName = "Total Q Before Exit", usageName = "totalQBeforeExit")
-	public double getTotalQBeforeExit() {
-		return totalQBeforeExit;
-	}
-
-	@Parameter(displayName = "Total F Before Exit", usageName = "totalFBeforeExit")
-	public double getTotalFBeforeExit() {
-		return totalFBeforeExit;
+	public double getTotalFirmsAfterExit() {
+		return totalFirmsAfterExit;
 	}
 
 }

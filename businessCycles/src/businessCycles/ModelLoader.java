@@ -14,8 +14,9 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.collections.IndexedIterable;
 
-public class ModelLoader extends DefaultContext<Object> implements
-		ContextBuilder<Object> {
+public class ModelLoader extends DefaultContext<Object> implements ContextBuilder<Object> {
+
+	DefaultContext<Firm> supplyManager;
 
 	@Override
 	public Context<Object> build(Context<Object> context) {
@@ -27,19 +28,20 @@ public class ModelLoader extends DefaultContext<Object> implements
 		if (checkParam()) {
 
 			// Previous supply manager should be eliminated
-			IndexedIterable<Object> tmpSuppManList = context
-					.getObjects(SupplyManager.class);
+			IndexedIterable<Object> tmpSuppManList = context.getObjects(SupplyManager.class);
 			if (tmpSuppManList.size() == 1) {
 				context.remove(tmpSuppManList.get(0));
 			}
 
-			new SupplyManager(context);
-
+			SupplyManager.readParams();
+			Demand.readParams();
 			Firm.readParams();
 
-			RunEnvironment.getInstance().endAt(
-					(Double) GetParameter("stopAt")
-							* (Integer) GetParameter("periods"));
+			supplyManager = new SupplyManager();
+			context.add(supplyManager);
+			context.addSubContext(supplyManager);
+
+			RunEnvironment.getInstance().endAt((Double) GetParameter("stopAt") * SupplyManager.periods);
 
 		} else {
 			EndSimulationRun();
@@ -57,12 +59,18 @@ public class ModelLoader extends DefaultContext<Object> implements
 
 		if (lRMean >= 1.0 || lRMean <= 0.5) {
 			Component frame = null;
-			JOptionPane.showMessageDialog(frame,
-					"The Learning Rate Mean should be < 1 and > 0.5",
-					"Inconsistent Learning Rate Parameter",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "The Learning Rate Mean should be < 1 and > 0.5",
+					"Inconsistent Learning Rate Parameter", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+
+		// It seems there is no need with new short term equilibrium
+//		return checkRecessionMagnitude();
+		return true;
+		
+	}
+
+	private static boolean checkRecessionMagnitude() {
 
 		/*
 		 * Check consistency of Recession Magnitude
@@ -71,19 +79,14 @@ public class ModelLoader extends DefaultContext<Object> implements
 		double sElast = (Double) GetParameter("supplyElasticity");
 		double maxRecMag = (dElast + sElast) / (sElast * (1.0 + dElast));
 
-		String[] recMags = ((String) GetParameter("recessionMagnitude"))
-				.split(":");
+		String[] recMags = ((String) GetParameter("recessionMagnitude")).split(":");
 		for (int i = 0; i < recMags.length; i++) {
 			if (Double.parseDouble(recMags[i]) >= maxRecMag) {
 				Component frame = null;
-				JOptionPane.showMessageDialog(
-						frame,
+				JOptionPane.showMessageDialog(frame,
 						"The recession magnitude is too big.\n"
-								+ String.format(
-										"Recession magnitude should be < %.3f",
-										maxRecMag),
-						"Inconsistent Recession Magnitude Parameter",
-						JOptionPane.ERROR_MESSAGE);
+								+ String.format("Recession magnitude should be < %.3f", maxRecMag),
+						"Inconsistent Recession Magnitude Parameter", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}

@@ -14,7 +14,6 @@ package businessCycles;
 
 import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
-import repast.simphony.context.Context;
 
 /**
  * 
@@ -24,18 +23,17 @@ import repast.simphony.context.Context;
 public class Firm {
 
 	public static SupplyManager supplyManager;
-	
+
 	// Local state variables - change every period
-	private double quantity;
+	private double quantityPerPeriod;
 	private double capital = 0.0;
-	private double nextCapital = 0.0;
-	
-	private double perPeriodPerformance = 0.0;
+
+	private double performancePerPeriod = 0.0;
 	private double acumQ = 0.0;
 	private double acumProfit = 0.0;
-	private double profit = 0.0;
-	private double maxFunding = 0.0;
-	private double invest = 0.0;
+	private double profitPerPeriod = 0.0;
+	private double maxFundingPerPeriod = 0.0;
+	private double investPerPeriod = 0.0;
 	private double flexibilityCost = 0.0;
 	private double unitProdCost = 0.0;
 	private double learningComponent = 0.0;
@@ -43,24 +41,25 @@ public class Firm {
 	private double flexibilityCostComponent = 0.0;
 	private double totalProdCost = 0.0;
 	private double totalNonProdCost = 0.0;
-	private double optimalMarkUp = 0.0;
-	private double marginalCost = 0.0;
-	private double markUp = 0.0;
+	private double optimalFullCapacityMarkUp = 0.0;
+	private double longTermMarginalCost = 0.0;
+	private double shortTermMarginalCost = 0.0;
+	private double currentMarkUpForPlanning = 0.0;
 
 	// Local firm variables - stable along firm life
 	private double firstUnitCost = 0.0;
 	private double operatingLeverage = 0.0;
-	private double learningRate = 0.0; 
+	private double learningRate = 0.0;
 	private double expon = 0.0;
 	private double born = 0.0;
 
 	// Static Firm variables - identical for all firms
-	private static double minVarCost;
+	private static double minLearningCostPerUnit;
 	private static double minCapital;
 	private static double costOfCapitalPerPeriod;
 
 	private static double perfWeight;
-	private static double minPerformance;
+	private static double minPerformancePerPeriod;
 
 	private static double demElast;
 	private static double supElast;
@@ -70,14 +69,14 @@ public class Firm {
 	private static double flexCostScale;
 	private static double deprecPerPeriod;
 	private static double maxExtFundPerPeriod;
-	private static double invParam;
+	private static double invParamPerPeriod;
 
 	private static long agentIDCounter;
 	private long agentID = agentIDCounter++;
 
-	public Firm(Context<Object> context) {
+	public Firm() {
 
-		context.add(this);
+		supplyManager.add(this);
 
 		born = GetTickCount();
 
@@ -90,9 +89,9 @@ public class Firm {
 		operatingLeverage = supplyManager.operatingLeverageUniform.nextDouble();
 
 		// Initial perfomance is set to minPerformance
-		perPeriodPerformance = minPerformance;
+		performancePerPeriod = minPerformancePerPeriod;
 
-		// Learning rate is a truncated Normal 
+		// Learning rate is a truncated Normal
 		// 0.5 < learning rate <= 1.0
 		learningRate = min(0.99, max(supplyManager.learningRateNormal.nextDouble(), 0.51));
 		expon = log(learningRate) / log(2.0);
@@ -102,14 +101,14 @@ public class Firm {
 	public static void readParams() {
 		// Static Firm variables - identical for all firms
 
-		int periods = (Integer) GetParameter("periods");
+		int periods = SupplyManager.periods;
 
-		minVarCost = (Double) GetParameter("minVarCost");
+		minLearningCostPerUnit = (Double) GetParameter("minLearningCostPerUnit");
 		minCapital = (Double) GetParameter("minimumCapital");
 		costOfCapitalPerPeriod = (Double) GetParameter("costOfCapital") / periods;
 
 		perfWeight = (Double) GetParameter("performanceWeight");
-		minPerformance = (Double) GetParameter("minimumPerformance");
+		minPerformancePerPeriod = (Double) GetParameter("minimumPerformance") / periods;
 
 		demElast = (Double) GetParameter("demandElasticity");
 		supElast = (Double) GetParameter("supplyElasticity");
@@ -118,74 +117,94 @@ public class Firm {
 		double opLevMax = (Double) GetParameter("operatingLeverageMax");
 		operatingLeverageMid = (opLevMin + opLevMax) / 2.0;
 		operatingLeverageScale = (opLevMax - opLevMin) / 2.0;
-		
-		
+
 		flexCostScale = (Double) GetParameter("flexibilityCostScale");
 		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
 		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding") / periods;
-		invParam = (Double) GetParameter("investmentParam");
+		invParamPerPeriod = (Double) GetParameter("investmentParam") / periods;
 
 		agentIDCounter = 1;
 	}
 
 	public boolean checkEntry() {
 
-		double expectedQ = Demand.getCapacityUsed() * capital;
-		
-		double expectedAnnualReturn = profit(expectedQ, getPrice()) *
-				SupplyManager.periods / getCapital();
+		double expectedPerPeriodQ = fullCapacityQuantityPerPeriod(capital);
 
-		return (expectedAnnualReturn >= minPerformance);
+		double expectedReturnPerPeriod = profitPerPeriod(expectedPerPeriodQ, getPrice()) / getCapital();
+
+		return (expectedReturnPerPeriod >= minPerformancePerPeriod);
+
+	}
+
+	public double applyPlannedInvestment() {
+
+		if (getBorn() < GetTickCount()) {
+			capital = capital * (1.0 - deprecPerPeriod) + investPerPeriod;
+
+			// capital should be at least 1 to be able to produce at least one unit
+			capital = max(1.0, capital);
+		}
+
+		return capital;
 
 	}
 
 	public double offer() {
 
-		if (getBorn() < GetTickCount()) {
-			capital = nextCapital;
-		}
+		// shortTermMarginaCost was calculated when short term market equilibrium was
+		// calculated
+		double shortTermQuantity = (1 - shortTermMarginalCost / supplyManager.getEstimatedPrice())
+				* Demand.getDemandElasticity() * supplyManager.getEstimatedTotalQuantity();
 
-		quantity = Demand.getCapacityUsed() * capital;
+		// Quantity should be at least one and cannot be higher than capital
+		quantityPerPeriod = max(1.0, min(fullCapacityQuantityPerPeriod(capital), shortTermQuantity));
 
-		return quantity;
+		return quantityPerPeriod;
 
 	}
 
-	public double profit(double q, double p) {
-
-		profit = p * q - totalProdCost(q) - totalNonProdCost();
-		return profit;
-		
+	public static double fullCapacityQuantityPerPeriod(double capital) {
+		return capital / SupplyManager.periods;
 	}
-		
-	private double totalProdCost(double quantity) {
 
-		unitProdCost = learningComponent() * operatingLeverageComponent() * flexibilityCostComponent();
-		
-		totalProdCost = unitProdCost * quantity;
-		
+	public double profitPerPeriod(double q, double p) {
+
+		profitPerPeriod = p * q - totalProdCostPerPeriod(q) - totalNonProdCostPerPeriod();
+		return profitPerPeriod;
+
+	}
+
+	private double totalProdCostPerPeriod(double quantityPerPeriod) {
+
+		double usedCapacity = quantityPerPeriod / fullCapacityQuantityPerPeriod(capital);
+
+		unitProdCost = learningComponent() * operatingLeverageComponent(usedCapacity) * flexibilityCostComponent();
+		totalProdCost = unitProdCost * quantityPerPeriod;
+
 		return totalProdCost;
-		
 	}
 
 	/*
 	 * learning curve effect
 	 */
 	private double learningComponent() {
+
 		double learningFactor = ((acumQ >= 1) ? pow(acumQ, expon) : 1);
-		
-		learningComponent = firstUnitCost * learningFactor + minVarCost;
+
+		learningComponent = firstUnitCost * learningFactor + minLearningCostPerUnit;
 
 		return learningComponent;
 	}
-	
-	
+
 	/*
 	 * Adjusts cost to take into account variable and fixed costs equals 1 at full
 	 * capacity
 	 */
-	private double operatingLeverageComponent() {
-		operatingLevarageComponent = operatingLeverage / getCapacityUsed() + (1 - operatingLeverage);
+	private double operatingLeverageComponent(double usedCapacity) {
+
+		assert usedCapacity != 0.0;
+
+		operatingLevarageComponent = operatingLeverage / usedCapacity + (1 - operatingLeverage);
 		return operatingLevarageComponent;
 	}
 
@@ -193,15 +212,12 @@ public class Firm {
 	 * Increases cost for flexible firms (low operating leverage)
 	 */
 	private double flexibilityCostComponent() {
-		flexibilityCostComponent = 1 + flexCostScale * (operatingLeverageMid - operatingLeverage) / operatingLeverageScale;
+		flexibilityCostComponent = 1
+				+ flexCostScale * (operatingLeverageMid - operatingLeverage) / operatingLeverageScale;
 		return flexibilityCostComponent;
 	}
 
-	private double getCapacityUsed() {
-		return Demand.getCapacityUsed();
-	}
-
-	private double totalNonProdCost() {
+	private double totalNonProdCostPerPeriod() {
 		totalNonProdCost = (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
 		return totalNonProdCost;
 	}
@@ -220,14 +236,14 @@ public class Firm {
 		boolean returnValue;
 
 		// Calculates profit & Performance
-		perPeriodPerformance = perfWeight * perPeriodPerformance + (1 - perfWeight) * getPerPeriodReturn();
+		profitPerPeriod = profitPerPeriod(quantityPerPeriod, getPrice());
+		performancePerPeriod = perfWeight * performancePerPeriod + (1 - perfWeight) * profitPerPeriod / capital;
 
 		// if it is an exit, returns false
-		double performance = perPeriodPerformance * SupplyManager.periods;
-		returnValue = !(performance < minPerformance || capital < minCapital);
+		returnValue = !(performancePerPeriod < minPerformancePerPeriod || capital < minCapital);
 
-		acumQ += quantity;
-		acumProfit += getProfit();
+		acumQ += quantityPerPeriod;
+		acumProfit += profitPerPeriod;
 
 		return returnValue;
 
@@ -235,63 +251,78 @@ public class Firm {
 
 	public void plan() {
 
-		maxFunding = getProfit() + deprecPerPeriod * capital
+		maxFundingPerPeriod = profitPerPeriod + deprecPerPeriod * capital
 				+ ((RecessionHandler.getRecesMagnitude() > 0.0) ? 0.0 : (maxExtFundPerPeriod * capital));
 
-		invest = min(maxFunding, capital * (deprecPerPeriod + netInvestment()));
+		investPerPeriod = min(maxFundingPerPeriod, capital * (deprecPerPeriod + netInvestmentPerPeriod()));
 
-		invest = max(0.0, invest);
+		// It is not allowed to desinvest
+		investPerPeriod = max(0.0, investPerPeriod);
 
-		nextCapital = capital * (1.0 - deprecPerPeriod) + invest;
+	}
+
+	private double netInvestmentPerPeriod() {
+
+		optimalFullCapacityMarkUp = (demElast + (1 - getCapitalShareAfterExit()) * supElast)
+				/ (demElast + (1 - getCapitalShareAfterExit()) * supElast - getCapitalShareAfterExit());
+
+		// It could be calculated using estimatedPriceForPlanning
+		currentMarkUpForPlanning = supplyManager.getPrice() / longTermMarginalCost();
+
+		return invParamPerPeriod * (1 - optimalFullCapacityMarkUp / currentMarkUpForPlanning);
 
 	}
 
-	private double netInvestment() {
-
-		optimalMarkUp = (demElast + (1 - getMarketShare()) * supElast)
-				/ (demElast + (1 - getMarketShare()) * supElast - getMarketShare());
-
-		markUp = getPrice() / marginalCost();
-
-		return invParam * (1 - optimalMarkUp / markUp);
-
-	}
-	
 	/*
 	 * Calculates marginal cost at full capacity
 	 */
-	private double marginalCost() {
-		marginalCost = learningComponent() * flexibilityCostComponent() + costOfCapitalPerPeriod + deprecPerPeriod;
-		return marginalCost;
+	private double longTermMarginalCost() {
+		longTermMarginalCost = learningComponent() * flexibilityCostComponent() + costOfCapitalPerPeriod
+				+ deprecPerPeriod;
+		return longTermMarginalCost;
 	}
 
 	/*
-	 * Methods to probe firm state
+	 * Calculates marginal cost when capital is fixed
 	 */
+	public double getCalculatedShortTermMarginalCost() {
+		shortTermMarginalCost = learningComponent() * flexibilityCostComponent() * (1 - operatingLeverage);
+
+		return shortTermMarginalCost;
+	}
+
 	public double getMarketShare() {
 
-		return quantity / supplyManager.totalQuantity;
+		return quantityPerPeriod / supplyManager.getTotalQuantityPerPeriod();
 
+	}
+
+	public double getCapitalShareAfterExit() {
+		return capital / supplyManager.getTotalCapitalAfterExit();
 	}
 
 	public double getPrice() {
-		return supplyManager.price;
+		return supplyManager.getPrice();
 	}
 
 	public double getQuantity() {
-		return quantity;
+		return quantityPerPeriod;
+	}
+
+	public double getProfitPerPeriod() {
+		return profitPerPeriod;
 	}
 
 	public double getProfit() {
-		return profit;
+		return profitPerPeriod * SupplyManager.periods;
 	}
 
 	public double getPerformance() {
-		return perPeriodPerformance;
+		return performancePerPeriod * SupplyManager.periods;
 	}
 
 	private double getPerPeriodReturn() {
-		return profit / capital;
+		return profitPerPeriod / capital;
 	}
 
 	public double getReturn() {
@@ -331,7 +362,15 @@ public class Firm {
 	}
 
 	public double getMedCost() {
-		return (totalProdCost + totalNonProdCost) / quantity;
+		return (totalProdCost + totalNonProdCost) / quantityPerPeriod;
+	}
+
+	public double getShortTermMarginalCost() {
+		return shortTermMarginalCost;
+	}
+
+	public double getLongTermMarginalCost() {
+		return longTermMarginalCost;
 	}
 
 	public double getTotalProdCost() {
@@ -342,18 +381,30 @@ public class Firm {
 		return unitProdCost;
 	}
 
+	public double getLearningComponent() {
+		return learningComponent;
+	}
+
+	public double getOperatingLevarageComponent() {
+		return operatingLevarageComponent;
+	}
+
+	public double getFlexibilityCostComponent() {
+		return flexibilityCostComponent;
+	}
+
 	public double getTotalNonProdCost() {
 		return totalNonProdCost;
 	}
 
 	public double getNonProdCostPerUnit() {
-		return totalNonProdCost / quantity;
+		return totalNonProdCost / quantityPerPeriod;
 	}
 
 	public double getOperatingLeverage() {
 		return operatingLeverage;
 	}
-	
+
 	public double getLearningRate() {
 		return learningRate;
 	}
@@ -363,11 +414,11 @@ public class Firm {
 	}
 
 	public double getMaxFunding() {
-		return maxFunding;
+		return maxFundingPerPeriod;
 	}
 
 	public double getInvest() {
-		return invest;
+		return investPerPeriod;
 	}
 
 	public double getFlexibilityCost() {
@@ -378,12 +429,12 @@ public class Firm {
 		return flexCostScale;
 	}
 
-	public double getOptimalMarkUp() {
-		return optimalMarkUp;
+	public double getOptimalFullCapacityMarkUp() {
+		return optimalFullCapacityMarkUp;
 	}
 
-	public double getMarkUp() {
-		return markUp;
+	public double getCurrentMarkUpForPlanning() {
+		return currentMarkUpForPlanning;
 	}
 
 }

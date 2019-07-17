@@ -6,34 +6,63 @@ import static repast.simphony.essentials.RepastEssentials.*;
 
 public class Demand {
 
+	private static double priceOfSubstitute;
+	private static double demandParameter;
+	private static double demandElasticity;
 
-	/**
+	public static void readParams() {
+		demandParameter = (Double) GetParameter("demandParameter");
+		demandElasticity = (Double) GetParameter("demandElasticity");
+
+		// Substitute price is assigned to estimated initial price
+		double iniKMean = (Double) GetParameter("iniKMean");
+		double entrantsMean = (Double) GetParameter("entrantsMean");
+		double estimatedInitialAnnualQuantity = entrantsMean * Firm.fullCapacityQuantityPerPeriod(iniKMean)
+				* SupplyManager.periods;
+		priceOfSubstitute = rawPriceFromAnnualQuantity(estimatedInitialAnnualQuantity, demandParameter,
+				demandElasticity);
+
+	}
+
+	/*
 	 * 
 	 * This is a constant elasticity demand function, with a maximum price
 	 * equivalent to the price of a substitute.
 	 * 
 	 */
-	public static double price(double quantity) {
+	private static double rawPriceFromAnnualQuantity(double annualQuantity, double param, double elast) {
+		return param * pow(annualQuantity, -1.0 / elast);
+	}
 
-		double annualizedQuantity = quantity
-				* (Integer) GetParameter("periods");
+	private static double rawAnnualDemandFromPrice(double price, double param, double elast) {
+		return pow(param / price, elast);
+	}
 
-		double tmpCrisisImpact = 1.0 - RecessionHandler.getRecesMagnitude();
+	public static double priceFromQuantityPerPeriod(double quantityPerPeriod) {
+		return noRecesPriceFromPeriodQuantity(quantityPerPeriod) * (1.0 - RecessionHandler.getRecesMagnitude());
+	}
 
-		double sub = (Double) GetParameter("priceOfSubstitute");
-		double param = (Double) GetParameter("demandParameter");
-		double elast = (Double) GetParameter("demandElasticity");
+	public static double noRecesPriceFromPeriodQuantity(double quantityPerPeriod) {
 
-		double dMin = sub * tmpCrisisImpact;
+		if (quantityPerPeriod == 0.0)
+			return priceOfSubstitute;
 
-		if (quantity > 0) {
+		else {
+			double annualizedQ = quantityPerPeriod * SupplyManager.periods;
+			return min(priceOfSubstitute,
+					rawPriceFromAnnualQuantity(annualizedQ, demandParameter, demandElasticity));
+		}
 
-			double d = param * pow(annualizedQuantity, -1.0 / elast)
-					* tmpCrisisImpact;
-			return min(sub, d);
+	}
 
-		} else
-			return dMin;
+	public static double inverseDemandPerPeriod(double price) {
+
+		double adjPrice = price / (1.0 - RecessionHandler.getRecesMagnitude());
+
+		if (adjPrice >= priceOfSubstitute)
+			return 0.0;
+		else
+			return rawAnnualDemandFromPrice(adjPrice, demandParameter, demandElasticity);
 
 	}
 
@@ -46,11 +75,18 @@ public class Demand {
 			double dElast = (Double) GetParameter("demandElasticity");
 			double sElast = (Double) GetParameter("supplyElasticity");
 
-			return 1.0 - (dElast * recMag * sElast)
-					/ (dElast + sElast * (1 - recMag));
+			return 1.0 - (dElast * recMag * sElast) / (dElast + sElast * (1 - recMag));
 
 		}
 
+	}
+
+	public static double getDemandElasticity() {
+		return demandElasticity;
+	}
+
+	public static double getPriceOfSubstitute() {
+		return priceOfSubstitute;
 	}
 
 	@ProbeID()

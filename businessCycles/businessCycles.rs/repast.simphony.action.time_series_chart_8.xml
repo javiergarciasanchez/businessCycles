@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Invest</name>
-  <dataSet>Firms</dataSet>
+  <name>Price</name>
+  <dataSet>Supply</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Invest</chartTitle>
+  <chartTitle>Price</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,15 +21,17 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>FirmNumID</string>
+      <string>Id</string>
       <SeriesData>
         <label></label>
       </SeriesData>
     </entry>
   </seriesIds>
   <dataValueIds>
-    <string>Invest</string>
-    <string>MaxFunding</string>
+    <string>Price</string>
+    <string>EstimatedPrice</string>
+    <string>EstimatedPriceForPlanning</string>
+    <string>AvgShortTermMarginalCost</string>
   </dataValueIds>
   <plotRangeLength>-1</plotRangeLength>
 </repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
