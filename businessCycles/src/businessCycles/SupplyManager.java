@@ -15,8 +15,6 @@ package businessCycles;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.util.FastMath;
-
 import cern.jet.random.*;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.schedule.*;
@@ -30,17 +28,11 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 	private RecessionHandler recessionHandler;
 
-	private double avgShortTermMarginalCost = 0.0;
-	private double estimatedTotalQuantityPerPeriod = 0.0;
-	private double estimatedPrice = 0.0;
-
 	private double totalCapitalAfterEntry = 0.0;
 	private double totalCapitalAfterExit = 0.0;
 
 	private double price = 0.0;
 	private double totalQuantityPerPeriod = 0;
-
-	private double estimatedPriceForPlanning = 0.0;
 
 	private double dead = 0;
 	private int bornFirms = 0;
@@ -54,23 +46,27 @@ public class SupplyManager extends DefaultContext<Firm> {
 	public Uniform operatingLeverageUniform = null;
 
 	public static int periods;
+	public static double estimatedInitialAnnualQuantity;
+
 	private static boolean entryOnlyAtStart;
+	private static double iniKMean;
+	private static double entrantsMean;
 
 	public SupplyManager() {
 
 		super("SupplyManager");
 
 		price = Demand.getPriceOfSubstitute();
+		totalQuantityPerPeriod = estimatedInitialAnnualQuantity;
 
 		recessionHandler = new RecessionHandler();
 		recessionHandler.scheduleRecessions();
 
 		/* Create distributions for initial variables of firms */
-		double iniKMean = (Double) GetParameter("iniKMean");
+
 		double iniKStdDev = (Double) GetParameter("iniKStdDev") * iniKMean;
 		iniKNormal = RandomHelper.createNormal(iniKMean, iniKStdDev);
 
-		double entrantsMean = (Double) GetParameter("entrantsMean");
 		double entrantsStdDev = (Double) GetParameter("entrantsStdDev") * entrantsMean;
 		entrantsNormal = RandomHelper.createNormal(entrantsMean, entrantsStdDev);
 
@@ -96,6 +92,10 @@ public class SupplyManager extends DefaultContext<Firm> {
 	public static void readParams() {
 		periods = (Integer) GetParameter("periods");
 		entryOnlyAtStart = (Boolean) GetParameter("entryOnlyAtStart");
+
+		iniKMean = (Double) GetParameter("iniKMean");
+		entrantsMean = (Double) GetParameter("entrantsMean");
+		estimatedInitialAnnualQuantity = entrantsMean * Firm.fullCapacityQuantityPerPeriod(iniKMean) * periods;
 	}
 
 	@ScheduledMethod(start = 1d, interval = 1)
@@ -128,10 +128,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 		}
 
 		// Apply planned investment and aggregate for short term maximization
-		totalCapitalAfterEntry = stream().mapToDouble(f -> f.applyPlannedInvestment()).sum();
-
-		// Calculate estimated short term market equilibrium
-		calculateShortTermEquilibrium();
+		totalCapitalAfterEntry = stream().mapToDouble(f -> f.applyAnnualPlannedInvestment()).sum();
 
 		// Process Offers
 		totalQuantityPerPeriod = stream().mapToDouble(f -> f.offer()).sum();
@@ -149,13 +146,8 @@ public class SupplyManager extends DefaultContext<Firm> {
 			totalCapitalAfterExit = totalCapitalAfterEntry;
 		}
 
-		// Estimated price for planning
-		// price without recession and at full capacity
-		double fullCapacityQuantityPerPeriodAfterExit = Firm.fullCapacityQuantityPerPeriod(totalCapitalAfterExit);
-		estimatedPriceForPlanning = Demand.noRecesPriceFromPeriodQuantity(fullCapacityQuantityPerPeriodAfterExit);
-
 		// Planning
-		stream().forEach(Firm::plan);
+		stream().forEach(Firm::annualPlan);
 
 	}
 
@@ -174,34 +166,6 @@ public class SupplyManager extends DefaultContext<Firm> {
 				RemoveAgentFromModel(f);
 
 		}
-
-	}
-
-	/*
-	 * Caculates short term equilibrium sets static fields to their values
-	 * 
-	 * - avgShortTermMarginalCost - estimatedTotalQuantity - estimatedPrice
-	 * 
-	 */
-	private void calculateShortTermEquilibrium() {
-
-		double numFirmDemElast = totalFirmsAfterEntry * Demand.getDemandElasticity();
-
-		avgShortTermMarginalCost = stream().mapToDouble(f -> f.getCalculatedShortTermMarginalCost()).average()
-				.orElse(0.0);
-
-		double fullCapacityTotalQuantityPerPeriod = Firm.fullCapacityQuantityPerPeriod(totalCapitalAfterEntry);
-		if (avgShortTermMarginalCost == 0.0)
-			estimatedTotalQuantityPerPeriod = fullCapacityTotalQuantityPerPeriod;
-
-		else {
-			double tmpPrice = avgShortTermMarginalCost * numFirmDemElast / (numFirmDemElast - 1);
-
-			estimatedTotalQuantityPerPeriod = FastMath.min(fullCapacityTotalQuantityPerPeriod,
-					Demand.inverseDemandPerPeriod(tmpPrice));
-		}
-
-		estimatedPrice = Demand.priceFromQuantityPerPeriod(estimatedTotalQuantityPerPeriod);
 
 	}
 
@@ -236,18 +200,6 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 	}
 
-	public double getAvgShortTermMarginalCost() {
-		return avgShortTermMarginalCost;
-	}
-
-	public double getEstimatedTotalQuantity() {
-		return estimatedTotalQuantityPerPeriod;
-	}
-
-	public double getEstimatedPrice() {
-		return estimatedPrice;
-	}
-
 	public double getTotalCapitalAfterEntry() {
 		return totalCapitalAfterEntry;
 	}
@@ -263,10 +215,6 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 	public double getTotalQuantity() {
 		return totalQuantityPerPeriod * periods;
-	}
-
-	public double getEstimatedPriceForPlanning() {
-		return estimatedPriceForPlanning;
 	}
 
 	@Parameter(displayName = "Price", usageName = "price")

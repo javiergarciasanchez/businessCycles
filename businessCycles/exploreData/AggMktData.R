@@ -10,7 +10,7 @@ ssc = splus %>%
 
 filteredssc = ssc %>%
   
-  filter(recessionMagnitude == 0.6 | recessionMagnitude == 0.0,
+  filter(recessionMagnitude == 0.5 | recessionMagnitude == 0.0,
          recessionDuration == 3)
 
 #Vars
@@ -32,7 +32,7 @@ filteredssc %>%
 
 # OverImposed Vars
 #overImpVarsToDraw = c("EstimatedPriceForPlanning", "Price", "AvgShortTermMarginalCost" )
-overImpVarsToDraw = c("TotalCapitalAfterEntry", "TotalQuantity", "TotalCapitalAfterExit", "EstimatedTotalQuantity")
+overImpVarsToDraw = c("TotalCapitalAfterEntry", "TotalQuantity", "TotalCapitalAfterExit")
 
 filteredssc %>%
   

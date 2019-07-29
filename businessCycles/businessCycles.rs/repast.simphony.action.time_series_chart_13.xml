@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Total Quantity</name>
-  <dataSet>Supply</dataSet>
+  <name>Profit per Firm</name>
+  <dataSet>Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Tot Q</chartTitle>
+  <chartTitle>Profit x F</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,17 +21,14 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>toString</string>
+      <string>FirmNumID</string>
       <SeriesData>
         <label></label>
       </SeriesData>
     </entry>
   </seriesIds>
   <dataValueIds>
-    <string>TotalQuantity</string>
-    <string>EstimatedTotalQuantity</string>
-    <string>TotalCapitalAfterEntry</string>
-    <string>TotalCapitalAfterExit</string>
+    <string>Profit</string>
   </dataValueIds>
   <plotRangeLength>-1</plotRangeLength>
 </repast.simphony.chart2.engine.TimeSeriesChartDescriptor>

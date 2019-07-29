@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Capital &amp; Quantity</name>
+  <name>Cost</name>
   <dataSet>Ag_Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>K &amp; Q</chartTitle>
+  <chartTitle>Cost</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,9 +21,33 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>KMean</string>
+      <string>MedCost</string>
       <SeriesData>
-        <label>KMean</label>
+        <label>MedCost</label>
+        <color>
+          <red>0</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Price</string>
+      <SeriesData>
+        <label>Price</label>
+        <color>
+          <red>255</red>
+          <green>200</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>LT Mg Cost</string>
+      <SeriesData>
+        <label>LT Mg Cost</label>
         <color>
           <red>0</red>
           <green>0</green>
@@ -33,13 +57,49 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>QMean</string>
+      <string>LearningComp</string>
       <SeriesData>
-        <label>QMean</label>
+        <label>LearningComp</label>
+        <color>
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>UnitProdCost</string>
+      <SeriesData>
+        <label>UnitProdCost</label>
         <color>
           <red>255</red>
           <green>0</green>
-          <blue>0</blue>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>FlexCostComp</string>
+      <SeriesData>
+        <label>FlexCostComp</label>
+        <color>
+          <red>0</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>ST Mg Cost</string>
+      <SeriesData>
+        <label>ST Mg Cost</label>
+        <color>
+          <red>102</red>
+          <green>255</green>
+          <blue>255</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

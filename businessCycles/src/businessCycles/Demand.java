@@ -15,11 +15,7 @@ public class Demand {
 		demandElasticity = (Double) GetParameter("demandElasticity");
 
 		// Substitute price is assigned to estimated initial price
-		double iniKMean = (Double) GetParameter("iniKMean");
-		double entrantsMean = (Double) GetParameter("entrantsMean");
-		double estimatedInitialAnnualQuantity = entrantsMean * Firm.fullCapacityQuantityPerPeriod(iniKMean)
-				* SupplyManager.periods;
-		priceOfSubstitute = rawPriceFromAnnualQuantity(estimatedInitialAnnualQuantity, demandParameter,
+		priceOfSubstitute = rawPriceFromAnnualQuantity(SupplyManager.estimatedInitialAnnualQuantity, demandParameter,
 				demandElasticity);
 
 	}
@@ -49,8 +45,7 @@ public class Demand {
 
 		else {
 			double annualizedQ = quantityPerPeriod * SupplyManager.periods;
-			return min(priceOfSubstitute,
-					rawPriceFromAnnualQuantity(annualizedQ, demandParameter, demandElasticity));
+			return min(priceOfSubstitute, rawPriceFromAnnualQuantity(annualizedQ, demandParameter, demandElasticity));
 		}
 
 	}

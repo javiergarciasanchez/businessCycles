@@ -15,6 +15,8 @@ package businessCycles;
 import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
 
+import org.apache.commons.math3.util.FastMath;
+
 /**
  * 
  * This is an agent.
@@ -32,26 +34,29 @@ public class Firm {
 	private double acumQ = 0.0;
 	private double acumProfit = 0.0;
 	private double profitPerPeriod = 0.0;
-	private double maxFundingPerPeriod = 0.0;
-	private double investPerPeriod = 0.0;
+	private double annualMaxFunding = 0.0;
+	private double annualInvestment = 0.0;
+	private double annualInternalFunding = 0.0;
 	private double flexibilityCost = 0.0;
 	private double unitProdCost = 0.0;
 	private double learningComponent = 0.0;
 	private double operatingLevarageComponent = 0.0;
 	private double flexibilityCostComponent = 0.0;
-	private double totalProdCost = 0.0;
-	private double totalNonProdCost = 0.0;
+	private double totalProdCostPerPeriod = 0.0;
+	private double totalNonProdCostPerPeriod = 0.0;
 	private double optimalFullCapacityMarkUp = 0.0;
 	private double longTermMarginalCost = 0.0;
 	private double shortTermMarginalCost = 0.0;
 	private double currentMarkUpForPlanning = 0.0;
+	private double optimalShortTermMarkUp = 0.0;
+	private double currentShortTermMarkUp = 0.0;
 
 	// Local firm variables - stable along firm life
 	private double firstUnitCost = 0.0;
 	private double operatingLeverage = 0.0;
 	private double learningRate = 0.0;
 	private double expon = 0.0;
-	private double born = 0.0;
+	private double bornTick = 0.0;
 
 	// Static Firm variables - identical for all firms
 	private static double minLearningCostPerUnit;
@@ -68,8 +73,9 @@ public class Firm {
 	private static double operatingLeverageScale;
 	private static double flexCostScale;
 	private static double deprecPerPeriod;
-	private static double maxExtFundPerPeriod;
-	private static double invParamPerPeriod;
+	private static double maxExtAnnualFunding;
+	private static double annualInvParam;
+	private static double capacityAdjustmentParam;
 
 	private static long agentIDCounter;
 	private long agentID = agentIDCounter++;
@@ -78,7 +84,7 @@ public class Firm {
 
 		supplyManager.add(this);
 
-		born = GetTickCount();
+		bornTick = GetTickCount();
 
 		// A minimum first unit cost is set to 10% of mean
 		firstUnitCost = max(0.1 * (Double) GetParameter("firstUnitCostMean"),
@@ -120,8 +126,9 @@ public class Firm {
 
 		flexCostScale = (Double) GetParameter("flexibilityCostScale");
 		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
-		maxExtFundPerPeriod = (Double) GetParameter("maxExternalFunding") / periods;
-		invParamPerPeriod = (Double) GetParameter("investmentParam") / periods;
+		maxExtAnnualFunding = (Double) GetParameter("maxExternalFunding");
+		annualInvParam = (Double) GetParameter("investmentParam");
+		capacityAdjustmentParam = (Double) GetParameter("capacityAdjustmentParam");
 
 		agentIDCounter = 1;
 	}
@@ -136,10 +143,10 @@ public class Firm {
 
 	}
 
-	public double applyPlannedInvestment() {
+	public double applyAnnualPlannedInvestment() {
 
-		if (getBorn() < GetTickCount()) {
-			capital = capital * (1.0 - deprecPerPeriod) + investPerPeriod;
+		if (isPlanningTick(GetTickCount() - 1)) {
+			capital = capital * (1.0 - deprecPerPeriod) + annualInvestment;
 
 			// capital should be at least 1 to be able to produce at least one unit
 			capital = max(1.0, capital);
@@ -151,15 +158,25 @@ public class Firm {
 
 	public double offer() {
 
-		// shortTermMarginaCost was calculated when short term market equilibrium was
-		// calculated
-		double shortTermQuantity = (1 - shortTermMarginalCost / supplyManager.getEstimatedPrice())
-				* Demand.getDemandElasticity() * supplyManager.getEstimatedTotalQuantity();
-
-		// Quantity should be at least one and cannot be higher than capital
-		quantityPerPeriod = max(1.0, min(fullCapacityQuantityPerPeriod(capital), shortTermQuantity));
+		// Quantity should be at least one and cannot be higher than quantity at full
+		// capacity
+		quantityPerPeriod = max(1.0, min(fullCapacityQuantityPerPeriod(capital), shortTermQuantityPerPeriod()));
 
 		return quantityPerPeriod;
+
+	}
+
+	private double shortTermQuantityPerPeriod() {
+
+		optimalShortTermMarkUp = (demElast + (1 - getMarketShare()) * supElast)
+				/ (demElast + (1 - getMarketShare()) * supElast - getMarketShare());
+
+		currentShortTermMarkUp = supplyManager.getPrice() / getCalculatedShortTermMarginalCost();
+
+		double quantityAdjustmentFactor = capacityAdjustmentParam
+				* (1 - optimalShortTermMarkUp / currentShortTermMarkUp);
+
+		return FastMath.min(quantityPerPeriod * (1 + quantityAdjustmentFactor), fullCapacityQuantityPerPeriod(capital));
 
 	}
 
@@ -179,9 +196,9 @@ public class Firm {
 		double usedCapacity = quantityPerPeriod / fullCapacityQuantityPerPeriod(capital);
 
 		unitProdCost = learningComponent() * operatingLeverageComponent(usedCapacity) * flexibilityCostComponent();
-		totalProdCost = unitProdCost * quantityPerPeriod;
+		totalProdCostPerPeriod = unitProdCost * quantityPerPeriod;
 
-		return totalProdCost;
+		return totalProdCostPerPeriod;
 	}
 
 	/*
@@ -218,8 +235,8 @@ public class Firm {
 	}
 
 	private double totalNonProdCostPerPeriod() {
-		totalNonProdCost = (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
-		return totalNonProdCost;
+		totalNonProdCostPerPeriod = (costOfCapitalPerPeriod + deprecPerPeriod) * capital;
+		return totalNonProdCostPerPeriod;
 	}
 
 	/*
@@ -244,21 +261,43 @@ public class Firm {
 
 		acumQ += quantityPerPeriod;
 		acumProfit += profitPerPeriod;
+		annualInternalFunding += profitPerPeriod + deprecPerPeriod * capital;
 
 		return returnValue;
 
 	}
 
-	public void plan() {
+	public void annualPlan() {
 
-		maxFundingPerPeriod = profitPerPeriod + deprecPerPeriod * capital
-				+ ((RecessionHandler.getRecesMagnitude() > 0.0) ? 0.0 : (maxExtFundPerPeriod * capital));
+		if (!isPlanningTick(GetTickCount()))
+			return;
 
-		investPerPeriod = min(maxFundingPerPeriod, capital * (deprecPerPeriod + netInvestmentPerPeriod()));
+		annualMaxFunding = annualInternalFunding + externalFunding();
 
-		// It is not allowed to desinvest
-		investPerPeriod = max(0.0, investPerPeriod);
+		// It is assumed that internal funding not used for investments is distributed
+		// as dividends
+		annualInternalFunding = 0.0;
 
+		annualInvestment = min(annualMaxFunding, capital * (deprecPerPeriod + netInvestmentPerPeriod()));
+
+		// It is not allowed to disinvest
+		annualInvestment = max(0.0, annualInvestment);
+
+	}
+
+	private boolean isPlanningTick(double tick) {
+
+		// End of year
+		return ((tick >= bornTick) && ((tick % SupplyManager.periods) == 0));
+
+	}
+
+	private double externalFunding() {
+
+		if (RecessionHandler.inRecession())
+			return 0.0;
+		else
+			return maxExtAnnualFunding * capital;
 	}
 
 	private double netInvestmentPerPeriod() {
@@ -266,10 +305,10 @@ public class Firm {
 		optimalFullCapacityMarkUp = (demElast + (1 - getCapitalShareAfterExit()) * supElast)
 				/ (demElast + (1 - getCapitalShareAfterExit()) * supElast - getCapitalShareAfterExit());
 
-		// It could be calculated using estimatedPriceForPlanning
+		// It could be calculated using an hypothetical long term price price
 		currentMarkUpForPlanning = supplyManager.getPrice() / longTermMarginalCost();
 
-		return invParamPerPeriod * (1 - optimalFullCapacityMarkUp / currentMarkUpForPlanning);
+		return annualInvParam * (1 - optimalFullCapacityMarkUp / currentMarkUpForPlanning);
 
 	}
 
@@ -305,12 +344,13 @@ public class Firm {
 		return supplyManager.getPrice();
 	}
 
-	public double getQuantity() {
+	public double getQuantityPerPeriod() {
 		return quantityPerPeriod;
 	}
 
-	public double getProfitPerPeriod() {
-		return profitPerPeriod;
+	public double getQuantity() {
+		// annualized quantity
+		return quantityPerPeriod * SupplyManager.periods;
 	}
 
 	public double getProfit() {
@@ -321,12 +361,8 @@ public class Firm {
 		return performancePerPeriod * SupplyManager.periods;
 	}
 
-	private double getPerPeriodReturn() {
-		return profitPerPeriod / capital;
-	}
-
 	public double getReturn() {
-		return getPerPeriodReturn() * SupplyManager.periods;
+		return profitPerPeriod * SupplyManager.periods / capital;
 	}
 
 	public double getFirstUnitCost() {
@@ -345,12 +381,16 @@ public class Firm {
 		return agentID;
 	}
 
-	public double getBorn() {
-		return born;
+	public double getYearOfBirth() {
+		return bornTick / SupplyManager.periods;
+	}
+	
+	public double getBornTick() {
+		return bornTick;
 	}
 
 	public double getAge() {
-		return GetTickCount() - getBorn();
+		return (GetTickCount() - bornTick) / SupplyManager.periods;
 	}
 
 	public double getExpon() {
@@ -362,7 +402,7 @@ public class Firm {
 	}
 
 	public double getMedCost() {
-		return (totalProdCost + totalNonProdCost) / quantityPerPeriod;
+		return (totalProdCostPerPeriod + totalNonProdCostPerPeriod) / quantityPerPeriod;
 	}
 
 	public double getShortTermMarginalCost() {
@@ -374,7 +414,7 @@ public class Firm {
 	}
 
 	public double getTotalProdCost() {
-		return totalProdCost;
+		return totalProdCostPerPeriod * SupplyManager.periods;
 	}
 
 	public double getUnitProdCost() {
@@ -394,15 +434,19 @@ public class Firm {
 	}
 
 	public double getTotalNonProdCost() {
-		return totalNonProdCost;
+		return totalNonProdCostPerPeriod * SupplyManager.periods;
 	}
 
 	public double getNonProdCostPerUnit() {
-		return totalNonProdCost / quantityPerPeriod;
+		return totalNonProdCostPerPeriod / quantityPerPeriod;
 	}
 
 	public double getOperatingLeverage() {
 		return operatingLeverage;
+	}
+	
+	public double getUsedCapacity() {
+		return quantityPerPeriod / fullCapacityQuantityPerPeriod(capital);
 	}
 
 	public double getLearningRate() {
@@ -414,11 +458,11 @@ public class Firm {
 	}
 
 	public double getMaxFunding() {
-		return maxFundingPerPeriod;
+		return annualMaxFunding;
 	}
 
 	public double getInvest() {
-		return investPerPeriod;
+		return annualInvestment;
 	}
 
 	public double getFlexibilityCost() {
@@ -435,6 +479,14 @@ public class Firm {
 
 	public double getCurrentMarkUpForPlanning() {
 		return currentMarkUpForPlanning;
+	}
+
+	public double getOptimalShortTermMarkUp() {
+		return optimalShortTermMarkUp;
+	}
+
+	public double getCurrentShortTermMarkUp() {
+		return currentShortTermMarkUp;
 	}
 
 }

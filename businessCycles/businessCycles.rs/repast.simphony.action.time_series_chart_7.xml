@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Invest</name>
+  <name>Invest x F</name>
   <dataSet>Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Invest</chartTitle>
+  <chartTitle>Invest x F</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>

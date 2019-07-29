@@ -64,33 +64,8 @@ public class ModelLoader extends DefaultContext<Object> implements ContextBuilde
 			return false;
 		}
 
-		// It seems there is no need with new short term equilibrium
-//		return checkRecessionMagnitude();
 		return true;
 		
-	}
-
-	private static boolean checkRecessionMagnitude() {
-
-		/*
-		 * Check consistency of Recession Magnitude
-		 */
-		double dElast = (Double) GetParameter("demandElasticity");
-		double sElast = (Double) GetParameter("supplyElasticity");
-		double maxRecMag = (dElast + sElast) / (sElast * (1.0 + dElast));
-
-		String[] recMags = ((String) GetParameter("recessionMagnitude")).split(":");
-		for (int i = 0; i < recMags.length; i++) {
-			if (Double.parseDouble(recMags[i]) >= maxRecMag) {
-				Component frame = null;
-				JOptionPane.showMessageDialog(frame,
-						"The recession magnitude is too big.\n"
-								+ String.format("Recession magnitude should be < %.3f", maxRecMag),
-						"Inconsistent Recession Magnitude Parameter", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		return true;
 	}
 
 }

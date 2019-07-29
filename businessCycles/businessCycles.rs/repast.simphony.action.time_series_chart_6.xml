@@ -28,7 +28,6 @@
     </entry>
   </seriesIds>
   <dataValueIds>
-    <string>CapitalShare</string>
     <string>MarketShare</string>
     <string>CapitalShareAfterExit</string>
   </dataValueIds>

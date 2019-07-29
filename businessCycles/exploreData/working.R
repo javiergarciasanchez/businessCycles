@@ -5,7 +5,7 @@ source('C:/Users/javie/git/businessCycles/businessCycles/exploreData/process.R')
 path = "C:/Users/javie/git/businessCycles/businessCycles/output"
 setwd(path)
 
-fileID = "2019.jul..16.20_49_06"
+fileID = "2019.jul..19.15_11_36"
 
 f = read_csv(paste0("Firms.", fileID, ".csv"))
 p = read_csv(paste0("Firms.", fileID, ".batch_param_map.csv"))
@@ -43,7 +43,7 @@ quantileVars = c("OLQ", "QQ", "OLQQ")
 filteredFScQ = fScQ %>%
   
   filter(OLQ != 2,
-         recessionMagnitude == 0.6 | recessionMagnitude == 0.0,
+         recessionMagnitude == 0.5 | recessionMagnitude == 0.0,
          recessionDuration == 3
   ) 
 

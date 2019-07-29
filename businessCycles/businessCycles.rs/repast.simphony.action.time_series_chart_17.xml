@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>MarkUp</name>
-  <dataSet>Ag_Firms</dataSet>
+  <name>ST Mark Up x F</name>
+  <dataSet>Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Mark Up</chartTitle>
+  <chartTitle>ST Mark Up x F</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,30 +21,15 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>OptimalFullCapacityMarkUp</string>
+      <string>FirmNumID</string>
       <SeriesData>
-        <label>OptimalFullCapacityMarkUp</label>
-        <color>
-          <red>255</red>
-          <green>51</green>
-          <blue>51</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>CurrentMarkUpForPlanning</string>
-      <SeriesData>
-        <label>CurrentMarkUpForPlanning</label>
-        <color>
-          <red>0</red>
-          <green>0</green>
-          <blue>255</blue>
-          <alpha>255</alpha>
-        </color>
+        <label></label>
       </SeriesData>
     </entry>
   </seriesIds>
-  <dataValueIds/>
+  <dataValueIds>
+    <string>CurrentShortTermMarkUp</string>
+    <string>OptimalShortTermMarkUp</string>
+  </dataValueIds>
   <plotRangeLength>-1</plotRangeLength>
 </repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
