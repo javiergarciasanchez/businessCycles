@@ -1,0 +1,6 @@
+#
+#Thu Oct 17 20:21:27 ART 2019
+incoming=tcp\://127.0.0.1\:5555
+outgoing=tcp\://127.0.0.1\:5556
+scenario=..\\businessCycles.rs
+working.directory=../
