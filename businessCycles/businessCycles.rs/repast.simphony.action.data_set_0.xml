@@ -153,14 +153,6 @@
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Price</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Price</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getPrice</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>Profit</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Profit</id>
@@ -297,22 +289,6 @@
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>CurrentShortTermMarkUp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>CurrentShortTermMarkUp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getCurrentShortTermMarkUp</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OptimalShortTermMarkUp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OptimalShortTermMarkUp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOptimalShortTermMarkUp</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>BornTick</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>BornTick</id>
@@ -326,6 +302,22 @@
         <id>UsedCapacity</id>
         <className>businessCycles.Firm</className>
         <methodName>getUsedCapacity</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>IndustryPrice</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>IndustryPrice</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getIndustryPrice</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>LocalPrice</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>LocalPrice</id>
+        <className>businessCycles.Firm</className>
+        <methodName>getLocalPrice</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

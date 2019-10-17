@@ -3,20 +3,25 @@ s = read_csv(paste0("Supply.", fileID, ".csv"))
 
 splus = s %>%
   mutate(TotalUsedCapacity = TotalQuantity/ TotalCapitalAfterEntry,
-         TotalSales = Price * TotalQuantity)
+         TotalSales = IndustryPrice * TotalQuantity)
 
 ssc = splus %>% 
   addScenarios(p, relevantParams)
 
 filteredssc = ssc %>%
   
-  filter(recessionMagnitude == 0.5 | recessionMagnitude == 0.0,
+  filter(recessionMagnitude == 0.2 | recessionMagnitude == 0.0,
          recessionDuration == 3)
 
 #Vars
 aggIdxVars = c("run", "random_seed", "tick")
 
-aggVarsToDraw = c("TotalUsedCapacity", "TotalSales")
+#aggVarsToDraw = c("TotalUsedCapacity", "TotalSales")
+aggVarsToDraw = c("TotalFirmsAfterEntry",
+                  "TotalFirmsAfterExit",
+                  "TotalCapitalAfterEntry",
+                  "TotalCapitalAfterExit",
+                  "TotalQuantity")
 
 
 filteredssc %>%
@@ -58,5 +63,4 @@ sscG = ssc %>%
   
   group_by_at(vars(relevantParams, "tick")) %>%
   summarise_at( vars(aggVarsToDraw, aggVarsToDraw.d), mean, na.rm = TRUE) %>%
-  ungroup()  
-
+  ungroup()

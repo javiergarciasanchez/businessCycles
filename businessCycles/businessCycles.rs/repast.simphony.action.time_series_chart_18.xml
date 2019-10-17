@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>ST MarkUP</name>
+  <name>Prices</name>
   <dataSet>Ag_Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>ST Mark Up</chartTitle>
+  <chartTitle>Prices</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,9 +21,21 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>OptimalShortTermMarkUp</string>
+      <string>AfterEntryKPrice</string>
       <SeriesData>
-        <label>OptimalShortTermMarkUp</label>
+        <label>AfterEntryKPrice</label>
+        <color>
+          <red>51</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>IndustryPrice</string>
+      <SeriesData>
+        <label>IndustryPrice</label>
         <color>
           <red>0</red>
           <green>0</green>
@@ -33,13 +45,25 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>CurrentShortTermMarkUp</string>
+      <string>LocalPrice</string>
       <SeriesData>
-        <label>CurrentShortTermMarkUp</label>
+        <label>LocalPrice</label>
         <color>
-          <red>0</red>
-          <green>153</green>
-          <blue>102</blue>
+          <red>153</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>AfterExitKPrice</string>
+      <SeriesData>
+        <label>AfterExitKPrice</label>
+        <color>
+          <red>255</red>
+          <green>51</green>
+          <blue>51</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

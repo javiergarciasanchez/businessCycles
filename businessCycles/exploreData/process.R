@@ -11,6 +11,12 @@ getRelevantParams = function(p) {
     names()
 }
 
+getFixedParams = function(p) {
+  p %>%
+    select_at(vars(setdiff(names(p), c("run", "randomSeed", getRelevantParams(p))))) %>%
+    distinct()
+}
+
 #Firms with Scenarios (relevant parameters values)
 addScenarios = function(f, p, relevantParams) {
   inner_join(f, select(p, "run", relevantParams), by="run")
@@ -89,7 +95,7 @@ addDiff = function(df, diffVars, keepVars, varDif, y, percent = FALSE){
   df.y = filter(df, (!!as.name(varDif))  == y)
   
   tmpKey = setdiff(names(df), c(diffVars, keepVars, varDif))
-  dfD = full_join(df, df.y, by = tmpKey)
+  dfD = inner_join(df, df.y, by = tmpKey)
   
   vars.x = sapply(diffVars, function(x) paste0(x, ".x"))
   vars.y = sapply(diffVars, function(x) paste0(x, ".y"))
@@ -122,6 +128,7 @@ addDataByQuantiles = function(df, Q, relevantParams){
     #Data by Tick
     group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
     mutate(N = n(),
+           TotalSales = sum(Sales),
            NDeath = sum(if_else(Death == tick, 1, 0)),
            NBorn = sum(if_else(YearOfBirth == tick, 1, 0)) ) %>%
     

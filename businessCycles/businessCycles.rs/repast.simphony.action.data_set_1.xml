@@ -41,14 +41,6 @@
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Price</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Price</id>
-        <className>businessCycles.SupplyManager</className>
-        <methodName>getPrice</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
       <string>TotalQuantity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>TotalQuantity</id>
@@ -102,6 +94,30 @@
         <id>TotalQuantityPerPeriod</id>
         <className>businessCycles.SupplyManager</className>
         <methodName>getTotalQuantityPerPeriod</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>IndustryPrice</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>IndustryPrice</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getIndustryPrice</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>AfterEntryFullCapacityPrice</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>AfterEntryFullCapacityPrice</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getAfterEntryFullCapacityPrice</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>AfterExitFullCapacityPrice</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>AfterExitFullCapacityPrice</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getAfterExitFullCapacityPrice</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

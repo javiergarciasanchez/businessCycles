@@ -19,7 +19,6 @@ import cern.jet.random.*;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.schedule.*;
 import repast.simphony.essentials.RepastEssentials;
-import repast.simphony.parameter.*;
 import repast.simphony.random.*;
 import static java.lang.Math.*;
 import static repast.simphony.essentials.RepastEssentials.*;
@@ -31,7 +30,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 	private double totalCapitalAfterEntry = 0.0;
 	private double totalCapitalAfterExit = 0.0;
 
-	private double price = 0.0;
+	private double industryPrice = 0.0;
 	private double totalQuantityPerPeriod = 0;
 
 	private double dead = 0;
@@ -56,7 +55,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 		super("SupplyManager");
 
-		price = Demand.getPriceOfSubstitute();
+		industryPrice = Demand.getPriceOfSubstitute();
 		totalQuantityPerPeriod = estimatedInitialAnnualQuantity;
 
 		recessionHandler = new RecessionHandler();
@@ -95,7 +94,11 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 		iniKMean = (Double) GetParameter("iniKMean");
 		entrantsMean = (Double) GetParameter("entrantsMean");
-		estimatedInitialAnnualQuantity = entrantsMean * Firm.fullCapacityQuantityPerPeriod(iniKMean) * periods;
+		estimatedInitialAnnualQuantity = entrantsMean * fullCapacityQuantityPerPeriod(iniKMean) * periods;
+	}
+
+	public static double fullCapacityQuantityPerPeriod(double capital) {
+		return capital / periods;
 	}
 
 	@ScheduledMethod(start = 1d, interval = 1)
@@ -121,7 +124,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 			totalCapitalAfterEntry = 0.0;
 			totalCapitalAfterExit = 0.0;
 			totalQuantityPerPeriod = 0.0;
-			price = Demand.getPriceOfSubstitute();
+			industryPrice = Demand.priceFromQuantityPerPeriod(totalQuantityPerPeriod);
 			dead = 0;
 			totalFirmsAfterExit = 0.0;
 			return;
@@ -132,7 +135,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 
 		// Process Offers
 		totalQuantityPerPeriod = stream().mapToDouble(f -> f.offer()).sum();
-		price = Demand.priceFromQuantityPerPeriod(totalQuantityPerPeriod);
+		industryPrice = Demand.priceFromQuantityPerPeriod(totalQuantityPerPeriod);
 
 		// Process Demand response and Kill Firms
 		if (killActive()) {
@@ -174,7 +177,7 @@ public class SupplyManager extends DefaultContext<Firm> {
 		if (entryOnlyAtStart)
 			return false;
 
-		else if (RecessionHandler.exitOnRecession() && RecessionHandler.inRecession())
+		else if (!RecessionHandler.exitOnRecession() && RecessionHandler.inRecession())
 			return false;
 
 		else
@@ -217,17 +220,23 @@ public class SupplyManager extends DefaultContext<Firm> {
 		return totalQuantityPerPeriod * periods;
 	}
 
-	@Parameter(displayName = "Price", usageName = "price")
-	public double getPrice() {
-		return price;
+	public double getAfterEntryFullCapacityPrice() {
+		return Demand.priceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterEntry));
 	}
 
-	@Parameter(displayName = "Dead", usageName = "dead")
+	public double getAfterExitFullCapacityPrice() {
+		return Demand.priceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterExit));
+	}
+	
+	public double getIndustryPrice() {
+		return industryPrice;
+	}
+
+
 	public double getDead() {
 		return dead;
 	}
 
-	@Parameter(displayName = "Born Firms", usageName = "bornFirms")
 	public int getBornFirms() {
 		return bornFirms;
 	}

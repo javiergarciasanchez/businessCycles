@@ -1,24 +1,51 @@
 <repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.6.0">
-  <name>Supply</name>
-  <dataSet>Supply</dataSet>
+  <name>Firms</name>
+  <dataSet>Firms</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>BornFirms</string>
-    <string>Dead</string>
-    <string>Id</string>
-    <string>Price</string>
-    <string>TotalQuantity</string>
+    <string>FirmNumID</string>
+    <string>AcumProfit</string>
+    <string>AcumQuantity</string>
+    <string>Age</string>
+    <string>Capital</string>
+    <string>Expon</string>
+    <string>FirstUnitCost</string>
+    <string>FlexCostScale</string>
+    <string>FlexibilityCost</string>
+    <string>Invest</string>
+    <string>LearningRate</string>
+    <string>MarketShare</string>
+    <string>MaxFunding</string>
+    <string>MedCost</string>
+    <string>NonProdCostPerUnit</string>
+    <string>OperatingLeverage</string>
+    <string>Performance</string>
+    <string>Profit</string>
+    <string>Quantity</string>
+    <string>Return</string>
+    <string>TotalNonProdCost</string>
+    <string>TotalProdCost</string>
+    <string>UnitProdCost</string>
     <string>toString</string>
-    <string>TotalFirmsAfterEntry</string>
-    <string>TotalCapitalAfterEntry</string>
-    <string>TotalCapitalAfterExit</string>
-    <string>TotalFirmsAfterExit</string>
-    <string>TotalQuantityPerPeriod</string>
+    <string>FlexibilityCostComponent</string>
+    <string>LearningComponent</string>
+    <string>OperatingLevarageComponent</string>
+    <string>OptimalFullCapacityMarkUp</string>
+    <string>LongTermMarginalCost</string>
+    <string>ShortTermMarginalCost</string>
+    <string>CurrentMarkUpForPlanning</string>
+    <string>CapitalShareAfterExit</string>
+    <string>QuantityPerPeriod</string>
+    <string>YearOfBirth</string>
+    <string>BornTick</string>
+    <string>UsedCapacity</string>
+    <string>IndustryPrice</string>
+    <string>LocalPrice</string>
     <string>tick</string>
     <string>run</string>
     <string>random_seed</string>
   </sourceIds>
-  <fileName>Supply.csv</fileName>
+  <fileName>./output/Firms.csv</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>
