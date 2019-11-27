@@ -1,9 +1,9 @@
-<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Used Capacity</name>
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.7.0">
+  <name>Local Prices</name>
   <dataSet>Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Used Capacity</chartTitle>
+  <chartTitle>Local Prices</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -28,7 +28,8 @@
     </entry>
   </seriesIds>
   <dataValueIds>
-    <string>UsedCapacity</string>
+    <string>LocalPrice</string>
+    <string>MedCost</string>
   </dataValueIds>
   <plotRangeLength>-1</plotRangeLength>
 </repast.simphony.chart2.engine.TimeSeriesChartDescriptor>

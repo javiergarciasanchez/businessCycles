@@ -1,10 +1,20 @@
 library(openxlsx)
 
+# Select scenarios to export to Excel
+selectedScenariosToExcel= fScQ %>%
+#   filter(recessionMagnitude == 0.2 | recessionMagnitude == 0.0 | recessionMagnitude == 0.05,
+#          recessionStart == 5 | recessionStart == 40,
+#          recessionDuration == 1 | recessionDuration == 3,
+#          entryOnlyAtStart == FALSE
+#          ) %>%
+  mutate(OLQ = as.numeric(OLQ))
+
+
 # Per Firm Data
-selectedFirmsToExcel = fScQ %>%
+selectedFirmsToExcel = selectedScenariosToExcel %>%
   filter( OLQ != 2, 
           BornTick < recessionStart,
-          Death == 60)
+          Death == 40)
 
 #varsToExcel = setdiff(names(fScQ), c(idxVars, relevantParams, quantileVars, "toSTring"))
 varsToExcel = c(
@@ -80,8 +90,22 @@ perFirmDiffToExcel = selectedFirmsToExcel %>%
   addDiff(varsToExcel, c("run", "OLQ"), "recessionMagnitude", 0, percent = FALSE) %>%
   meanByQuantiles("OLQ", varsToExcel.d, relevantParams)
 
+
 ###
-### Agreggated Data fro Selected Firms
+###
+### Individual data for ALL Firms - NO Difference, because different firms
+###
+###
+
+#Plain Data per Cohort
+dataToExcelAllFirms = selectedScenariosToExcel %>%
+  select_at(vars(idxVars, relevantParams, "OLQ", varsToExcel)) %>%
+  meanByQuantiles("OLQ", varsToExcel, relevantParams) 
+
+
+
+###
+### Agreggated Data for Selected Firms
 ###
 
 calcVarsByQuantileToExcel = c("N", "NDeath", "NBorn","TotalSales")
@@ -92,10 +116,10 @@ dataByQuantiletoExcel = selectedFirmsToExcel %>%
   addDataByQuantiles("OLQ", relevantParams) %>%
   meanByQuantiles("OLQ", calcVarsByQuantileToExcel, relevantParams)
 
-# Differences agains base scenario
+# Differences against base scenario
 diffDataByQuantiletoExcel = dataByQuantiletoExcel %>% 
   addDiff(calcVarsByQuantileToExcel, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
-  meanByQuantiles("OLQ", calcVarsByQuantileToExcel.d, relevantParams)
+  select(relevantParams, tick, OLQ, calcVarsByQuantileToExcel.d)
 
 
 ###
@@ -106,14 +130,14 @@ calcVarsByQuantileToExcel = c("N", "NDeath", "NBorn","TotalSales")
 calcVarsByQuantileToExcel.d = sapply(calcVarsByQuantileToExcel, function(x) paste0(x, ".d"))
 
 # Plain Data
-dataByQuantiletoExcelAllFirms = fScQ %>%
+dataByQuantiletoExcelAllFirms = selectedScenariosToExcel %>%
   addDataByQuantiles("OLQ", relevantParams) %>%
   meanByQuantiles("OLQ", calcVarsByQuantileToExcel, relevantParams)
 
-# Differences agains base scenario
+# Differences against base scenario
 diffDataByQuantiletoExcelAllFirms = dataByQuantiletoExcelAllFirms %>% 
   addDiff(calcVarsByQuantileToExcel, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
-  meanByQuantiles("OLQ", calcVarsByQuantileToExcel.d, relevantParams)
+  select(relevantParams, tick, OLQ, calcVarsByQuantileToExcel.d)
 
 
 
@@ -122,6 +146,7 @@ wb = createWorkbook()
 
 addWorksheet(wb, "data")
 addWorksheet(wb, "diff")
+addWorksheet(wb, "dataAllFirms")
 addWorksheet(wb, "aggDataSelFirms")
 addWorksheet(wb, "aggDiffSelFirms")
 addWorksheet(wb, "aggDataAllFirms")
@@ -131,6 +156,7 @@ addWorksheet(wb, "params")
 
 writeData(wb, "data", dataToExcel)
 writeData(wb, "diff", perFirmDiffToExcel)
+writeData(wb, "dataAllFirms", dataToExcelAllFirms)
 writeData(wb, "aggDataSelFirms",dataByQuantiletoExcel)
 writeData(wb, "aggDiffSelFirms",diffDataByQuantiletoExcel)
 writeData(wb, "aggDataAllFirms",dataByQuantiletoExcelAllFirms)

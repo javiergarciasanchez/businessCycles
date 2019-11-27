@@ -1,7 +1,6 @@
 package businessCycles;
 
 import static repast.simphony.essentials.RepastEssentials.GetParameter;
-import static repast.simphony.essentials.RepastEssentials.GetTickCount;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
@@ -67,14 +66,7 @@ public class RecessionHandler {
 
 	public static boolean inRecession() {
 
-		double tick = GetTickCount();
-
-		for (int i = 0; i < start.length; i++) {
-			if (start[i] <= tick && tick < start[i] + dur[i])
-				return true;
-		}
-
-		return false;
+		return (getRecesMagnitude() > 0.0);
 
 	}
 

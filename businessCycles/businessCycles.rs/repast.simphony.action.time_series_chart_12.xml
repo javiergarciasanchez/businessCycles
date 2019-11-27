@@ -1,9 +1,9 @@
-<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Profit per Firm</name>
-  <dataSet>Firms</dataSet>
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.7.0">
+  <name>Firms #</name>
+  <dataSet>Supply</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Profit x F</chartTitle>
+  <chartTitle>Firm #</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,14 +21,17 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>FirmNumID</string>
+      <string>toString</string>
       <SeriesData>
         <label></label>
       </SeriesData>
     </entry>
   </seriesIds>
   <dataValueIds>
-    <string>Profit</string>
+    <string>BornFirms</string>
+    <string>Dead</string>
+    <string>TotalFirmsAfterExit</string>
+    <string>TotalFirmsAfterEntry</string>
   </dataValueIds>
   <plotRangeLength>-1</plotRangeLength>
 </repast.simphony.chart2.engine.TimeSeriesChartDescriptor>

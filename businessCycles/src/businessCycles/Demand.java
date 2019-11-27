@@ -35,10 +35,10 @@ public class Demand {
 	}
 
 	public static double priceFromQuantityPerPeriod(double quantityPerPeriod) {
-		return noRecesPriceFromPeriodQuantity(quantityPerPeriod) * (1.0 - RecessionHandler.getRecesMagnitude());
+		return noRecesPriceFromQuantityPerPeriod(quantityPerPeriod) * (1.0 - RecessionHandler.getRecesMagnitude());
 	}
 
-	public static double noRecesPriceFromPeriodQuantity(double quantityPerPeriod) {
+	public static double noRecesPriceFromQuantityPerPeriod(double quantityPerPeriod) {
 
 		if (quantityPerPeriod == 0.0)
 			return priceOfSubstitute;

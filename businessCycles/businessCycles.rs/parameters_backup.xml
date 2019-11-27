@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
 					<parameter name="stopAt" displayName="Stop At" type="double" 
-						defaultValue="60.0" 
+						defaultValue="40.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="investmentParam" displayName="Investment Param" type="double" 
-						defaultValue="0.6" 
+						defaultValue="1.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -31,7 +31,7 @@
 									
 		/>
 				<parameter name="firstUnitCostMean" displayName="First Unit Cost Mean (as spread over min var cost)" type="double" 
-						defaultValue="20.0" 
+						defaultValue="10.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -43,7 +43,7 @@
 									
 		/>
 				<parameter name="supplyElasticity" displayName="Supply Elasticity" type="double" 
-						defaultValue="1.0" 
+						defaultValue="2.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -115,13 +115,13 @@
 									
 		/>
 				<parameter name="recessionStart" displayName="Recessions Start (sep by :  - colon)" type="java.lang.String" 
-						defaultValue="40" 
+						defaultValue="15" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 				<parameter name="demandParameter" displayName="Demand Parameter" type="double" 
-						defaultValue="600.0" 
+						defaultValue="400.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -150,14 +150,8 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="innovationErrorStdDev" displayName="Innovation Error Std Dev" type="double" 
-						defaultValue="0.1" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
 				<parameter name="iniKMean" displayName="Ini K Mean" type="double" 
-						defaultValue="4.0" 
+						defaultValue="30.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -181,7 +175,7 @@
 									
 		/>
 				<parameter name="entrantsMean" displayName="Entrants Mean" type="double" 
-						defaultValue="2.0" 
+						defaultValue="15.0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

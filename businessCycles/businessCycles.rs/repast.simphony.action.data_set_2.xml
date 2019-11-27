@@ -1,9 +1,10 @@
-<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.6.0">
-  <name>Ag_Firms</name>
-  <type>AGGREGATE</type>
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+  <name>Supply</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>businessCycles.SupplyManager</sourceType>
   <inclTick>true</inclTick>
-  <inclBatchRun>false</inclBatchRun>
-  <inclRandomSeed>false</inclRandomSeed>
+  <inclBatchRun>true</inclBatchRun>
+  <inclRandomSeed>true</inclRandomSeed>
   <scheduleParams>
     <start>1.0</start>
     <interval>1.0</interval>
@@ -11,143 +12,88 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1416625335</hashCode>
+    <hashCode>656621778</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>KMean</string>
+      <string>BornFirms</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>KMean</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getCapital</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>QMean</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>QMean</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getQuantity</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>MedCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>MedCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getMedCost</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>UnitProdCost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>UnitProdCost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getUnitProdCost</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>FlexCostComp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>FlexCostComp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getFlexibilityCostComponent</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>LearningComp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LearningComp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getLearningComponent</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OpComp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OpComp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOperatingLevarageComponent</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Profit</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Profit</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getProfit</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>OptimalFullCapacityMarkUp</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>OptimalFullCapacityMarkUp</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getOptimalFullCapacityMarkUp</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>CurrentMarkUpForPlanning</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>CurrentMarkUpForPlanning</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getCurrentMarkUpForPlanning</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>QPerPeriod</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>QPerPeriod</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getQuantityPerPeriod</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Invest</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Invest</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getInvest</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>ST Mg Cost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>ST Mg Cost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getShortTermMarginalCost</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>LT Mg Cost</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LT Mg Cost</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getLongTermMarginalCost</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>AfterEntryKPrice</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>AfterEntryKPrice</id>
+        <id>BornFirms</id>
         <className>businessCycles.SupplyManager</className>
-        <methodName>getAfterEntryFullCapacityPrice</methodName>
-        <aggType>MEAN</aggType>
+        <methodName>getBornFirms</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Dead</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Dead</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getDead</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Id</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Id</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getId</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalQuantity</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalQuantity</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalQuantity</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>toString</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>toString</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>toString</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalFirmsAfterEntry</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalFirmsAfterEntry</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalFirmsAfterEntry</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalCapitalAfterEntry</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalCapitalAfterEntry</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalCapitalAfterEntry</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalCapitalAfterExit</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalCapitalAfterExit</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalCapitalAfterExit</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalFirmsAfterExit</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalFirmsAfterExit</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalFirmsAfterExit</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalQuantityPerPeriod</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>TotalQuantityPerPeriod</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getTotalQuantityPerPeriod</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
@@ -156,25 +102,22 @@
         <id>IndustryPrice</id>
         <className>businessCycles.SupplyManager</className>
         <methodName>getIndustryPrice</methodName>
-        <aggType>MEAN</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>LocalPrice</string>
+      <string>AfterEntryFullCapacityPrice</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LocalPrice</id>
-        <className>businessCycles.Firm</className>
-        <methodName>getLocalPrice</methodName>
-        <aggType>MEAN</aggType>
+        <id>AfterEntryFullCapacityPrice</id>
+        <className>businessCycles.SupplyManager</className>
+        <methodName>getAfterEntryFullCapacityPrice</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>AfterExitKPrice</string>
+      <string>AfterExitFullCapacityPrice</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>AfterExitKPrice</id>
+        <id>AfterExitFullCapacityPrice</id>
         <className>businessCycles.SupplyManager</className>
         <methodName>getAfterExitFullCapacityPrice</methodName>
-        <aggType>MEAN</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

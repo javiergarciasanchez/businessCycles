@@ -6,7 +6,7 @@
 ###
 
 #calcVarsByQuantileToDraw = c("N", "MaxN", "NToMaxN", "NDeath", "NBorn")
-calcVarsByQuantileToDraw = c("N", "NDeath", "NBorn","TotalSales", "MarketShare")
+calcVarsByQuantileToDraw = c("N", "NDeath", "NBorn","TotalQuantity")
 
 dataByQuantileAllFirms = selectedScenarios %>%
   
@@ -22,13 +22,12 @@ dataByQuantileAllFirms %>%
 calcVarsByQuantileToDraw.d = sapply(calcVarsByQuantileToDraw, function(x) paste0(x, ".d"))
 
 # Table of differences respect to base scenario, grouped by OLQ
-diffDataByQuantileAllFirms = dataByQuantileAllFirms %>% 
-
+diffDataByQuantileAllFirms = dataByQuantileAllFirms %>%
+  
   # Add variation respect to base scenario
   addDiff(calcVarsByQuantileToDraw, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
 
-  # Add Stats by Quantile
-  meanByQuantiles("OLQ", calcVarsByQuantileToDraw.d, relevantParams)
+  select(relevantParams, tick, OLQ, calcVarsByQuantileToDraw.d, )
 
   
 diffDataByQuantileAllFirms %>%
@@ -68,13 +67,12 @@ dataByQuantileSelectedFirms %>%
 # Diference variables
 
 # Table of differences respect to base scenario, grouped by OLQ
-diffDataByQuantileSelectedFirms = dataByQuantileSelectedFirms %>% 
+diffDataByQuantileSelectedFirms = dataByQuantileSelectedFirms %>%
   
   # Add variation respect to base scenario
   addDiff(calcVarsByQuantileToDraw, c("run"), "recessionMagnitude", 0, percent = FALSE) %>%
   
-  # Add Stats by Quantile
-  meanByQuantiles("OLQ", calcVarsByQuantileToDraw.d, relevantParams)
+  select(relevantParams, tick, OLQ, calcVarsByQuantileToDraw.d, )
 
 
 diffDataByQuantileSelectedFirms %>%

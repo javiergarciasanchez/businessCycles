@@ -1,4 +1,4 @@
-<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.7.0">
   <name>Mkt Share</name>
   <dataSet>Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>

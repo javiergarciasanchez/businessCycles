@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Scenario simphonyVersion="2.6.0">
-<repast.simphony.action.data_set context="businessCycles" file="repast.simphony.action.data_set_0.xml" />
+<Scenario simphonyVersion="2.7.0">
+<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="businessCycles" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
 <repast.simphony.action.data_set context="businessCycles" file="repast.simphony.action.data_set_1.xml" />
 <repast.simphony.action.data_set context="businessCycles" file="repast.simphony.action.data_set_2.xml" />
-<repast.simphony.action.file_sink context="businessCycles" file="repast.simphony.action.file_sink_3.xml" />
+<repast.simphony.action.data_set context="businessCycles" file="repast.simphony.action.data_set_3.xml" />
 <repast.simphony.action.file_sink context="businessCycles" file="repast.simphony.action.file_sink_4.xml" />
-<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="businessCycles" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_5.xml" />
+<repast.simphony.action.file_sink context="businessCycles" file="repast.simphony.action.file_sink_5.xml" />
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_6.xml" />
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_7.xml" />
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_8.xml" />
@@ -20,4 +20,7 @@
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_17.xml" />
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_18.xml" />
 <repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_19.xml" />
+<repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_20.xml" />
+<repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_21.xml" />
+<repast.simphony.action.time_series_chart context="businessCycles" file="repast.simphony.action.time_series_chart_22.xml" />
 </Scenario>

@@ -20,6 +20,7 @@ public class Firm {
 	private double acumProfit = 0.0;
 	private double profitPerPeriod = 0.0;
 	private double annualMaxFunding = 0.0;
+	private double desiredAnnualNetInvestment = 0.0;
 	private double annualInvestment = 0.0;
 	private double annualInternalFunding = 0.0;
 	private double flexibilityCost = 0.0;
@@ -107,7 +108,7 @@ public class Firm {
 		operatingLeverageScale = (opLevMax - opLevMin) / 2.0;
 
 		flexCostScale = (Double) GetParameter("flexibilityCostScale");
-		deprecPerPeriod = (Double) GetParameter("depreciation") / periods;
+		deprecPerPeriod = ((Double) GetParameter("depreciation")) / periods;
 		maxExtAnnualFunding = (Double) GetParameter("maxExternalFunding");
 		annualInvParam = (Double) GetParameter("investmentParam");
 
@@ -127,7 +128,7 @@ public class Firm {
 	public double applyAnnualPlannedInvestment() {
 
 		if (isPlanningTick(GetTickCount() - 1)) {
-			capital = capital * (1.0 - deprecPerPeriod) + annualInvestment;
+			capital = capital * (1.0 - deprecPerPeriod * periods) + annualInvestment;
 
 			// capital should be at least 1 to be able to produce at least one unit
 			capital = max(1.0, capital);
@@ -142,14 +143,13 @@ public class Firm {
 		if (RecessionHandler.inRecession()) {
 			// Local monopoly maximization
 			double monopolyPrice = getCalculatedShortTermMarginalCost() * demElast / (demElast - 1.0);
-			quantityPerPeriod = Demand.inverseDemandPerPeriod(monopolyPrice) * getCapitalShareAfterEntry();
 
-			// quantity cannot be higher than quantity at full capacity
-			quantityPerPeriod = min(SupplyManager.fullCapacityQuantityPerPeriod(capital), quantityPerPeriod);
-
-			// industry full capacity price corresponds to production firm producing at full
-			// capacity
+			// local price should between the two full capacity prices: reces and no-reces
 			localPrice = FastMath.max(monopolyPrice, supplyManager.getAfterEntryFullCapacityPrice());
+			localPrice = FastMath.min(localPrice, supplyManager.getNoRecessionAfterEntryFullCapacityPrice());
+			
+			// quantity corresponds to the local price chosen
+			quantityPerPeriod = Demand.inverseDemandPerPeriod(localPrice) * getCapitalShareAfterEntry();
 			
 		} else {
 			localPrice = supplyManager.getAfterEntryFullCapacityPrice();
@@ -237,7 +237,7 @@ public class Firm {
 		// add to accumulators
 		acumQ += quantityPerPeriod;
 		acumProfit += profitPerPeriod;
-		annualInternalFunding += profitPerPeriod + deprecPerPeriod * capital;
+		annualInternalFunding += profitPerPeriod + (deprecPerPeriod + costOfCapitalPerPeriod) * capital;
 
 		// if it is an exit, returns false
 		return !(performancePerPeriod < minPerformancePerPeriod || capital < minCapital);
@@ -254,8 +254,9 @@ public class Firm {
 		// It is assumed that internal funding not used for investments is distributed
 		// as dividends
 		annualInternalFunding = 0.0;
+		desiredAnnualNetInvestment = annualNetInvestment();
 
-		annualInvestment = min(annualMaxFunding, capital * (deprecPerPeriod * periods + annualNetInvestment()));
+		annualInvestment = min(annualMaxFunding, capital * (deprecPerPeriod * periods + desiredAnnualNetInvestment));
 
 		// It is not allowed to disinvest
 		annualInvestment = max(0.0, annualInvestment);
@@ -282,14 +283,11 @@ public class Firm {
 		optimalFullCapacityMarkUp = (demElast + (1 - getCapitalShareAfterExit()) * supElast)
 				/ (demElast + (1 - getCapitalShareAfterExit()) * supElast - getCapitalShareAfterExit());
 
-		currentMarkUpForPlanning = localPrice / longTermAnnualMarginalCost();
+		double planningPrice = supplyManager.getNoRecessionAfterExitFullCapacityPrice();
+		currentMarkUpForPlanning = planningPrice / longTermAnnualMarginalCost();
 
-		double annualQuantityImprovement = annualInvParam * (1 - optimalFullCapacityMarkUp / currentMarkUpForPlanning);
-
-		// use idle capacity
-		double availableAnnualQuantity = (SupplyManager.fullCapacityQuantityPerPeriod(capital) - quantityPerPeriod)
-				* periods;
-		return annualQuantityImprovement - availableAnnualQuantity;
+		// As planning is done using full capacity data, idle capacity is not taken into account
+		return annualInvParam * (1 - optimalFullCapacityMarkUp / currentMarkUpForPlanning);
 
 	}
 
@@ -300,6 +298,10 @@ public class Firm {
 		longTermAnnualMarginalCost = learningComponent() * flexibilityCostComponent()
 				+ (costOfCapitalPerPeriod + deprecPerPeriod) * periods;
 		return longTermAnnualMarginalCost;
+	}
+
+	public double getDesiredAnnualNetInvestment() {
+		return desiredAnnualNetInvestment;
 	}
 
 	/*

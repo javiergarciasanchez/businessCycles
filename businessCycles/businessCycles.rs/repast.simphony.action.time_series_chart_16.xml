@@ -1,9 +1,9 @@
-<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.6.0">
-  <name>Invest</name>
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor simphonyVersion="2.7.0">
+  <name>Prices</name>
   <dataSet>Ag_Firms</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel></yAxisLabel>
-  <chartTitle>Invest</chartTitle>
+  <chartTitle>Prices</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,13 +21,49 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Invest</string>
+      <string>AfterEntryKPrice</string>
       <SeriesData>
-        <label>Invest</label>
+        <label>AfterEntryKPrice</label>
+        <color>
+          <red>51</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>IndustryPrice</string>
+      <SeriesData>
+        <label>IndustryPrice</label>
         <color>
           <red>0</red>
           <green>0</green>
           <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>LocalPrice</string>
+      <SeriesData>
+        <label>LocalPrice</label>
+        <color>
+          <red>153</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>AfterExitKPrice</string>
+      <SeriesData>
+        <label>AfterExitKPrice</label>
+        <color>
+          <red>255</red>
+          <green>51</green>
+          <blue>51</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

@@ -129,6 +129,7 @@ addDataByQuantiles = function(df, Q, relevantParams){
     group_by_at(vars(relevantParams, "tick", Q, "random_seed")) %>%
     mutate(N = n(),
            TotalSales = sum(Sales),
+           TotalQuantity = sum(Quantity),
            NDeath = sum(if_else(Death == tick, 1, 0)),
            NBorn = sum(if_else(YearOfBirth == tick, 1, 0)) ) %>%
     

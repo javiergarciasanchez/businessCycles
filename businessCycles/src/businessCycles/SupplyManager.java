@@ -224,8 +224,16 @@ public class SupplyManager extends DefaultContext<Firm> {
 		return Demand.priceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterEntry));
 	}
 
+	public double getNoRecessionAfterEntryFullCapacityPrice() {
+		return Demand.noRecesPriceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterEntry));
+	}
+	
 	public double getAfterExitFullCapacityPrice() {
 		return Demand.priceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterExit));
+	}
+
+	public double getNoRecessionAfterExitFullCapacityPrice() {
+		return Demand.noRecesPriceFromQuantityPerPeriod(fullCapacityQuantityPerPeriod(totalCapitalAfterExit));
 	}
 	
 	public double getIndustryPrice() {
